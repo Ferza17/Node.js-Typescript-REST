@@ -1,6 +1,5 @@
 import {json} from 'body-parser'
 import * as http from "http";
-import Utils from "./Utils/Utils";
 import mongoose from "mongoose"
 import express, {Request, Response, NextFunction} from 'express';
 
@@ -10,7 +9,7 @@ import env from "./Utils/Env/env.config"
 import JwtMiddleware from "./Middleware/JWT/JwtMiddleware";
 import {MongoDB} from "./Repository/MongoDB/MongoDB";
 import ProductRoutes from "./Routes/Product/ProductRoutes"
-import {ProductsService} from "./Services/Products/Products";
+import {ProductsService} from "./Services/Products/ProductsServices";
 import ProductController from "./Controllers/ProductController/ProductController";
 
 
@@ -20,13 +19,12 @@ app.use(json())
 
 
 //Bootstrapping
-const utils = new Utils()
-const jwtMiddleware = new JwtMiddleware(utils)
-const mongoDBRepository = new MongoDB(utils, mongoose)
+const jwtMiddleware = new JwtMiddleware()
+const mongoDBRepository = new MongoDB(mongoose)
 
 //Products
 const productService = new ProductsService(mongoDBRepository)
-const productController = new ProductController(utils, productService)
+const productController = new ProductController(productService)
 const productRoutes = new ProductRoutes(app, jwtMiddleware, productController)
 
 // Users
@@ -39,7 +37,7 @@ app.use("/ping", (req: Request, res: Response, next: NextFunction) => {
         Message: "Pong",
         Data: null
     }
-    return utils.Response.ResponseJSON(req, res, data)
+    return ResponseJSON(req, res, data)
 })
 
 server.listen(env.APP_PORT, () => {

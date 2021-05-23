@@ -1,13 +1,47 @@
-import {Request, Response, NextFunction} from "express"
-import {ResponseJSON} from "../../Utils/Response/ResponseUtils"
-import Utils from "../../Utils/Utils";
+import {NextFunction, Request, Response} from "express"
+import {HttpStatusCode, ResponseJSON} from "../../Utils/Response/ResponseUtils"
 import {Controller} from "../Controller";
-import {ProductsService} from "../../Services/Products/Products";
-import JwtMiddleware from "../../Middleware/JWT/JwtMiddleware";
+import {ProductsService} from "../../Services/Products/ProductsServices";
+import {IProduct, Validate} from "../../Models/Product"
 
 class ProductController extends Controller {
-    constructor(utils: Utils, private productService: ProductsService) {
-        super(utils);
+    constructor(private productService: ProductsService) {
+        super();
+    }
+
+    CreateProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        // Product Image Base64
+        let response: ResponseJSON
+        let product: IProduct = req.body
+        const isValidate = Validate(product)
+        if (!isValidate.isOk) {
+            response = {
+                Code: HttpStatusCode.BadRequest,
+                Message: isValidate.reason,
+                Data: null
+            }
+            ResponseJSON(req, res, response)
+            return
+        }
+
+        const ProductCreated = await this.productService.CreateProduct(product)
+        if (ProductCreated == null) {
+            response = {
+                Code: HttpStatusCode.InternalServerError,
+                Message: "Error While Creating Product!",
+                Data: null
+            }
+            ResponseJSON(req, res, response)
+            return
+        }
+
+        response = {
+            Code: HttpStatusCode.Created,
+            Message: "Created!",
+            Data: ProductCreated
+        }
+        ResponseJSON(req, res, response)
+        return
     }
 
     GetProducts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -19,19 +53,87 @@ class ProductController extends Controller {
                 Message: "Empty",
                 Data: products
             }
-            this.utils.Response.ResponseJSON(req, res, response)
+            ResponseJSON(req, res, response)
+            return
         }
         response = {
             Data: products,
             Message: "Success",
             Code: 200
         }
-        this.utils.Response.ResponseJSON(req, res, response)
+        ResponseJSON(req, res, response)
+        return
+    }
+
+    GetProductsById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        let response: ResponseJSON
+        const productId: String = req.params.id
+
+        const result = await this.productService.GetProductsById(productId)
+        if (result == null) {
+            response = {
+                Code: HttpStatusCode.NotFound,
+                Message: "Not Found",
+                Data: result,
+            }
+            ResponseJSON(req, res, response)
+            return
+        }
+
+        response = {
+            Code: HttpStatusCode.Ok,
+            Message: "Success",
+            Data: result,
+        }
+        ResponseJSON(req, res, response)
+        return
     }
 
     GetProductsWithCreatedUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         let response: ResponseJSON
         //TODO: Get User Id with JWT
+    }
+
+    UpdateProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        let response: ResponseJSON
+        const productId: String = req.params.id
+        let product: IProduct = req.body
+
+        const isValidate = Validate(product)
+        if (!isValidate.isOk) {
+            response = {
+                Code: HttpStatusCode.BadRequest,
+                Message: isValidate.reason,
+                Data: null
+            }
+            ResponseJSON(req, res, response)
+            return
+        }
+
+        product._id = productId
+        const data = await this.productService.UpdateProduct(product)
+        if (data == null) {
+            response = {
+                Code: HttpStatusCode.InternalServerError,
+                Message: "Error While Update!",
+                Data: null
+            }
+            ResponseJSON(req, res, response)
+            return
+        }
+
+        response = {
+            Code: HttpStatusCode.Ok,
+            Message: "Updated!",
+            Data: null
+        }
+        ResponseJSON(req, res, response)
+        return
+    }
+
+    DeleteProducts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        //TODO: Delete Products
+        return
     }
 }
 

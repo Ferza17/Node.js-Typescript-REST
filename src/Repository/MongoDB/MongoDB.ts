@@ -1,18 +1,17 @@
 import {Repository} from "../Repository";
-import Utils from "../../Utils/Utils";
 import env from "../../Utils/Env/env.config"
 import mongoose from "mongoose"
 
 export class MongoDB extends Repository {
-    constructor(util: Utils, private conn: mongoose.Mongoose) {
-        super(util);
+    constructor( private conn: mongoose.Mongoose) {
+        super();
     }
 
     GetConnection(): mongoose.Mongoose {
         // @ts-ignore
         return this.conn.connect(env.MONGODB_URL, {
             useCreateIndex: true,
-            useFindAndModify: true,
+            useFindAndModify: false,
             useUnifiedTopology: true
         }).then(res => {
             console.log("Success Connected to MongoDB...")

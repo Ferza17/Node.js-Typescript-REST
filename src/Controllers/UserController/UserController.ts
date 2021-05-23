@@ -1,11 +1,10 @@
-
 // import ProductModel from "../../Models/Product"
 
-import Utils from "../../Utils/Utils";
 
 class UserController {
-    constructor(private Utils:Utils) {
+    constructor() {
     }
+
     GetUser() {
         console.log("User Controller")
         //Service

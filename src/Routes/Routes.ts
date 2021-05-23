@@ -1,7 +1,13 @@
 import express from "express";
 import JwtMiddleware from "../Middleware/JWT/JwtMiddleware";
 
-export abstract class Routes {
+
+enum RoutesList {
+    Product = "/products",
+    User = "/users"
+}
+
+abstract class Routes {
 
     protected constructor(protected app: express.Application, jwt: JwtMiddleware, protected name: string) {
     }
@@ -12,3 +18,5 @@ export abstract class Routes {
 
     abstract initRoutes(): express.Application
 }
+
+export {Routes, RoutesList}

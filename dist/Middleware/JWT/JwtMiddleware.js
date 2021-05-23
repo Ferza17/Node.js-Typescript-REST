@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Middleware_1 = require("../Middleware");
 class JwtMiddleware extends Middleware_1.Middleware {
-    constructor(utils) {
-        super(utils);
+    constructor() {
+        super();
     }
     JwtRequired(req, res, next) {
         console.log("JWT Required");

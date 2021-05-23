@@ -24,25 +24,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const body_parser_1 = require("body-parser");
 const http = __importStar(require("http"));
-const Utils_1 = __importDefault(require("./Utils/Utils"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const express_1 = __importDefault(require("express"));
+const ResponseUtils_1 = require("./Utils/Response/ResponseUtils");
 const env_config_1 = __importDefault(require("./Utils/Env/env.config"));
 const JwtMiddleware_1 = __importDefault(require("./Middleware/JWT/JwtMiddleware"));
 const MongoDB_1 = require("./Repository/MongoDB/MongoDB");
 const ProductRoutes_1 = __importDefault(require("./Routes/Product/ProductRoutes"));
-const Products_1 = require("./Services/Products/Products");
+const ProductsServices_1 = require("./Services/Products/ProductsServices");
 const ProductController_1 = __importDefault(require("./Controllers/ProductController/ProductController"));
 const app = express_1.default();
 const server = http.createServer(app);
 app.use(body_parser_1.json());
 //Bootstrapping
-const utils = new Utils_1.default();
-const jwtMiddleware = new JwtMiddleware_1.default(utils);
-const mongoDBRepository = new MongoDB_1.MongoDB(utils, mongoose_1.default);
+const jwtMiddleware = new JwtMiddleware_1.default();
+const mongoDBRepository = new MongoDB_1.MongoDB(mongoose_1.default);
 //Products
-const productService = new Products_1.ProductsService(mongoDBRepository);
-const productController = new ProductController_1.default(utils, productService);
+const productService = new ProductsServices_1.ProductsService(mongoDBRepository);
+const productController = new ProductController_1.default(productService);
 const productRoutes = new ProductRoutes_1.default(app, jwtMiddleware, productController);
 // Users
 // const userService = new UserService(mongoDBRepository)
@@ -53,7 +52,7 @@ app.use("/ping", (req, res, next) => {
         Message: "Pong",
         Data: null
     };
-    return utils.Response.ResponseJSON(req, res, data);
+    return ResponseUtils_1.ResponseJSON(req, res, data);
 });
 server.listen(env_config_1.default.APP_PORT, () => {
     mongoDBRepository.GetConnection();

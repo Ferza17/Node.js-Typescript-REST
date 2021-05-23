@@ -7,31 +7,50 @@ exports.Validate = exports.Product = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const productSchema = new mongoose_1.default.Schema({
     name: {
-        type: String,
-        required: true
+        type: String
     },
     image: {
-        type: String,
-        required: false
+        type: String
     },
     price: {
-        type: Number,
-        required: true
+        type: Number
     },
     description: {
-        type: String,
-        required: false
+        type: String
     },
     type: {
-        type: String,
-        required: true
+        type: String
     }
 }, {
     versionKey: false
 });
-const Product = mongoose_1.default.model("Product", productSchema);
+const Product = mongoose_1.default.model("products", productSchema);
 exports.Product = Product;
 // Custom Validation
-const Validate = (Product) => {
+const Validate = (p) => {
+    let val = {
+        isOk: true,
+        reason: ""
+    };
+    if (p.name == "") {
+        val.isOk = false;
+        val.reason = "Should Provide name";
+        return val;
+    }
+    if (p.price == 0) {
+        val.isOk = false;
+        val.reason = "Should Provide price";
+        return val;
+    }
+    if (p.description == "") {
+        val.isOk = false;
+        val.reason = "Should Provide description";
+    }
+    if (p.type == "") {
+        val.isOk = false;
+        val.reason = "Should Provide Type";
+        return val;
+    }
+    return val;
 };
 exports.Validate = Validate;

@@ -21,7 +21,7 @@ class ProductsService extends Services_1.Services {
                 return yield Product_1.Product.find({}).exec();
             }
             catch (err) {
-                return null;
+                return [];
             }
         });
     }
