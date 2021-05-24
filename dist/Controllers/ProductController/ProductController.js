@@ -27,7 +27,7 @@ class ProductController extends Controller_1.Controller {
                     Message: isValidate.reason,
                     Data: null
                 };
-                ResponseUtils_1.ResponseJSON(req, res, response);
+                yield ResponseUtils_1.ResponseJSON(req, res, response);
                 return;
             }
             const ProductCreated = yield this.productService.CreateProduct(product);
@@ -37,7 +37,7 @@ class ProductController extends Controller_1.Controller {
                     Message: "Error While Creating Product!",
                     Data: null
                 };
-                ResponseUtils_1.ResponseJSON(req, res, response);
+                yield ResponseUtils_1.ResponseJSON(req, res, response);
                 return;
             }
             response = {
@@ -45,7 +45,7 @@ class ProductController extends Controller_1.Controller {
                 Message: "Created!",
                 Data: ProductCreated
             };
-            ResponseUtils_1.ResponseJSON(req, res, response);
+            yield ResponseUtils_1.ResponseJSON(req, res, response);
             return;
         });
         this.GetProducts = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
@@ -57,7 +57,7 @@ class ProductController extends Controller_1.Controller {
                     Message: "Empty",
                     Data: products
                 };
-                ResponseUtils_1.ResponseJSON(req, res, response);
+                yield ResponseUtils_1.ResponseJSON(req, res, response);
                 return;
             }
             response = {
@@ -65,7 +65,7 @@ class ProductController extends Controller_1.Controller {
                 Message: "Success",
                 Code: 200
             };
-            ResponseUtils_1.ResponseJSON(req, res, response);
+            yield ResponseUtils_1.ResponseJSON(req, res, response);
             return;
         });
         this.GetProductsById = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
@@ -78,7 +78,7 @@ class ProductController extends Controller_1.Controller {
                     Message: "Not Found",
                     Data: result,
                 };
-                ResponseUtils_1.ResponseJSON(req, res, response);
+                yield ResponseUtils_1.ResponseJSON(req, res, response);
                 return;
             }
             response = {
@@ -86,7 +86,7 @@ class ProductController extends Controller_1.Controller {
                 Message: "Success",
                 Data: result,
             };
-            ResponseUtils_1.ResponseJSON(req, res, response);
+            yield ResponseUtils_1.ResponseJSON(req, res, response);
             return;
         });
         this.GetProductsWithCreatedUser = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
@@ -104,7 +104,7 @@ class ProductController extends Controller_1.Controller {
                     Message: isValidate.reason,
                     Data: null
                 };
-                ResponseUtils_1.ResponseJSON(req, res, response);
+                yield ResponseUtils_1.ResponseJSON(req, res, response);
                 return;
             }
             product._id = productId;
@@ -115,7 +115,7 @@ class ProductController extends Controller_1.Controller {
                     Message: "Error While Update!",
                     Data: null
                 };
-                ResponseUtils_1.ResponseJSON(req, res, response);
+                yield ResponseUtils_1.ResponseJSON(req, res, response);
                 return;
             }
             response = {
@@ -123,7 +123,7 @@ class ProductController extends Controller_1.Controller {
                 Message: "Updated!",
                 Data: null
             };
-            ResponseUtils_1.ResponseJSON(req, res, response);
+            yield ResponseUtils_1.ResponseJSON(req, res, response);
             return;
         });
         this.DeleteProducts = (req, res, next) => __awaiter(this, void 0, void 0, function* () {

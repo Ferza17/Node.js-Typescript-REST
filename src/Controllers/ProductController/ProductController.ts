@@ -20,7 +20,7 @@ class ProductController extends Controller {
                 Message: isValidate.reason,
                 Data: null
             }
-            ResponseJSON(req, res, response)
+            await ResponseJSON(req, res, response)
             return
         }
 
@@ -31,7 +31,7 @@ class ProductController extends Controller {
                 Message: "Error While Creating Product!",
                 Data: null
             }
-            ResponseJSON(req, res, response)
+            await ResponseJSON(req, res, response)
             return
         }
 
@@ -40,7 +40,7 @@ class ProductController extends Controller {
             Message: "Created!",
             Data: ProductCreated
         }
-        ResponseJSON(req, res, response)
+        await ResponseJSON(req, res, response)
         return
     }
 
@@ -53,7 +53,7 @@ class ProductController extends Controller {
                 Message: "Empty",
                 Data: products
             }
-            ResponseJSON(req, res, response)
+            await ResponseJSON(req, res, response)
             return
         }
         response = {
@@ -61,7 +61,7 @@ class ProductController extends Controller {
             Message: "Success",
             Code: 200
         }
-        ResponseJSON(req, res, response)
+        await ResponseJSON(req, res, response)
         return
     }
 
@@ -76,7 +76,7 @@ class ProductController extends Controller {
                 Message: "Not Found",
                 Data: result,
             }
-            ResponseJSON(req, res, response)
+            await ResponseJSON(req, res, response)
             return
         }
 
@@ -85,7 +85,7 @@ class ProductController extends Controller {
             Message: "Success",
             Data: result,
         }
-        ResponseJSON(req, res, response)
+        await ResponseJSON(req, res, response)
         return
     }
 
@@ -106,7 +106,7 @@ class ProductController extends Controller {
                 Message: isValidate.reason,
                 Data: null
             }
-            ResponseJSON(req, res, response)
+            await ResponseJSON(req, res, response)
             return
         }
 
@@ -118,7 +118,7 @@ class ProductController extends Controller {
                 Message: "Error While Update!",
                 Data: null
             }
-            ResponseJSON(req, res, response)
+            await ResponseJSON(req, res, response)
             return
         }
 
@@ -127,7 +127,7 @@ class ProductController extends Controller {
             Message: "Updated!",
             Data: null
         }
-        ResponseJSON(req, res, response)
+        await ResponseJSON(req, res, response)
         return
     }
 
