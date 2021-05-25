@@ -1,7 +1,7 @@
 import {json} from 'body-parser'
 import * as http from "http";
 import mongoose from "mongoose"
-import express, {Request, Response, NextFunction} from 'express';
+import express, {Request, Response} from 'express';
 
 
 import {ResponseJSON} from "./Utils/Response/ResponseUtils";
@@ -31,7 +31,7 @@ const productRoutes = new ProductRoutes(app, jwtMiddleware, productController)
 // const userService = new UserService(mongoDBRepository)
 
 productRoutes.initRoutes()
-app.use("/ping", (req: Request, res: Response, next: NextFunction) => {
+app.use("/ping", (req: Request, res: Response) => {
     let data: ResponseJSON = {
         Code: 200,
         Message: "Pong",

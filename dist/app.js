@@ -46,7 +46,7 @@ const productRoutes = new ProductRoutes_1.default(app, jwtMiddleware, productCon
 // Users
 // const userService = new UserService(mongoDBRepository)
 productRoutes.initRoutes();
-app.use("/ping", (req, res, next) => {
+app.use("/ping", (req, res) => {
     let data = {
         Code: 200,
         Message: "Pong",
