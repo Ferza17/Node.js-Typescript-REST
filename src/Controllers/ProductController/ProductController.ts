@@ -89,10 +89,6 @@ class ProductController extends Controller {
         return
     }
 
-    GetProductsWithCreatedUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        let response: ResponseJSON
-        //TODO: Get User Id with JWT
-    }
 
     UpdateProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         let response: ResponseJSON
@@ -132,7 +128,25 @@ class ProductController extends Controller {
     }
 
     DeleteProducts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        //TODO: Delete Products
+        let response: ResponseJSON
+        const productId: String = req.params.id
+        const deletedProduct = this.productService.DeleteProduct(productId)
+        if (deletedProduct == null) {
+            response = {
+                Code: HttpStatusCode.BadRequest,
+                Message: "Error While Deleting Products!",
+                Data: null
+            }
+
+            await ResponseJSON(req, res, response)
+            return
+        }
+        response = {
+            Code: HttpStatusCode.Ok,
+            Message: "Deleted!",
+            Data: null
+        }
+        await ResponseJSON(req, res, response)
         return
     }
 }

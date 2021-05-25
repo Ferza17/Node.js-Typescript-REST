@@ -38,7 +38,7 @@ export class ProductsService extends Services {
         return product
     }
 
-     UpdateProduct = async (p: IProduct): Promise<IProduct | null> => {
+    UpdateProduct = async (p: IProduct): Promise<IProduct | null> => {
         let product: IProduct | null
         try {
             product = await Product.findOneAndUpdate({_id: p._id}, p).exec()
@@ -49,6 +49,12 @@ export class ProductsService extends Services {
     }
 
     DeleteProduct = async (productId: String): Promise<any> => {
-        return null
+        let product: IProduct | null
+        try {
+            product = await Product.findOneAndDelete({_id: productId})
+        } catch (err) {
+            throw new Error(err)
+        }
+        return product
     }
 }
