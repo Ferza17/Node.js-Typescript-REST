@@ -16,7 +16,7 @@ class ProductController extends Controller_1.Controller {
     constructor(productService) {
         super();
         this.productService = productService;
-        this.CreateProduct = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.CreateProduct = (req, res) => __awaiter(this, void 0, void 0, function* () {
             // Product Image Base64
             let response;
             let product = req.body;
@@ -27,7 +27,7 @@ class ProductController extends Controller_1.Controller {
                     Message: isValidate.reason,
                     Data: null
                 };
-                yield ResponseUtils_1.ResponseJSON(req, res, response);
+                ResponseUtils_1.ResponseJSON(req, res, response);
                 return;
             }
             const ProductCreated = yield this.productService.CreateProduct(product);
@@ -37,7 +37,7 @@ class ProductController extends Controller_1.Controller {
                     Message: "Error While Creating Product!",
                     Data: null
                 };
-                yield ResponseUtils_1.ResponseJSON(req, res, response);
+                ResponseUtils_1.ResponseJSON(req, res, response);
                 return;
             }
             response = {
@@ -45,10 +45,10 @@ class ProductController extends Controller_1.Controller {
                 Message: "Created!",
                 Data: ProductCreated
             };
-            yield ResponseUtils_1.ResponseJSON(req, res, response);
+            ResponseUtils_1.ResponseJSON(req, res, response);
             return;
         });
-        this.GetProducts = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.GetProducts = (req, res) => __awaiter(this, void 0, void 0, function* () {
             let response;
             const products = yield this.productService.GetProducts();
             if (products == null) {
@@ -57,7 +57,7 @@ class ProductController extends Controller_1.Controller {
                     Message: "Empty",
                     Data: products
                 };
-                yield ResponseUtils_1.ResponseJSON(req, res, response);
+                ResponseUtils_1.ResponseJSON(req, res, response);
                 return;
             }
             response = {
@@ -65,10 +65,10 @@ class ProductController extends Controller_1.Controller {
                 Message: "Success",
                 Code: 200
             };
-            yield ResponseUtils_1.ResponseJSON(req, res, response);
+            ResponseUtils_1.ResponseJSON(req, res, response);
             return;
         });
-        this.GetProductsById = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.GetProductsById = (req, res) => __awaiter(this, void 0, void 0, function* () {
             let response;
             const productId = req.params.id;
             const result = yield this.productService.GetProductsById(productId);
@@ -78,7 +78,7 @@ class ProductController extends Controller_1.Controller {
                     Message: "Not Found",
                     Data: result,
                 };
-                yield ResponseUtils_1.ResponseJSON(req, res, response);
+                ResponseUtils_1.ResponseJSON(req, res, response);
                 return;
             }
             response = {
@@ -86,14 +86,10 @@ class ProductController extends Controller_1.Controller {
                 Message: "Success",
                 Data: result,
             };
-            yield ResponseUtils_1.ResponseJSON(req, res, response);
+            ResponseUtils_1.ResponseJSON(req, res, response);
             return;
         });
-        this.GetProductsWithCreatedUser = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            let response;
-            //TODO: Get User Id with JWT
-        });
-        this.UpdateProduct = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.UpdateProduct = (req, res) => __awaiter(this, void 0, void 0, function* () {
             let response;
             const productId = req.params.id;
             let product = req.body;
@@ -104,7 +100,7 @@ class ProductController extends Controller_1.Controller {
                     Message: isValidate.reason,
                     Data: null
                 };
-                yield ResponseUtils_1.ResponseJSON(req, res, response);
+                ResponseUtils_1.ResponseJSON(req, res, response);
                 return;
             }
             product._id = productId;
@@ -115,7 +111,7 @@ class ProductController extends Controller_1.Controller {
                     Message: "Error While Update!",
                     Data: null
                 };
-                yield ResponseUtils_1.ResponseJSON(req, res, response);
+                ResponseUtils_1.ResponseJSON(req, res, response);
                 return;
             }
             response = {
@@ -123,11 +119,28 @@ class ProductController extends Controller_1.Controller {
                 Message: "Updated!",
                 Data: null
             };
-            yield ResponseUtils_1.ResponseJSON(req, res, response);
+            ResponseUtils_1.ResponseJSON(req, res, response);
             return;
         });
-        this.DeleteProducts = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            //TODO: Delete Products
+        this.DeleteProducts = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            let response;
+            const productId = req.params.id;
+            const deletedProduct = this.productService.DeleteProduct(productId);
+            if (deletedProduct == null) {
+                response = {
+                    Code: ResponseUtils_1.HttpStatusCode.BadRequest,
+                    Message: "Error While Deleting Products!",
+                    Data: null
+                };
+                ResponseUtils_1.ResponseJSON(req, res, response);
+                return;
+            }
+            response = {
+                Code: ResponseUtils_1.HttpStatusCode.Ok,
+                Message: "Deleted!",
+                Data: null
+            };
+            ResponseUtils_1.ResponseJSON(req, res, response);
             return;
         });
     }

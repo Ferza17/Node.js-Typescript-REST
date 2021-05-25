@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response} from "express"
+import { Request, Response} from "express"
 import {HttpStatusCode, ResponseJSON} from "../../Utils/Response/ResponseUtils"
 import {Controller} from "../Controller";
 import {ProductsService} from "../../Services/Products/ProductsServices";
@@ -9,7 +9,7 @@ class ProductController extends Controller {
         super();
     }
 
-    CreateProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    CreateProduct = async (req: Request, res: Response): Promise<void> => {
         // Product Image Base64
         let response: ResponseJSON
         let product: IProduct = req.body
@@ -20,7 +20,7 @@ class ProductController extends Controller {
                 Message: isValidate.reason,
                 Data: null
             }
-            await ResponseJSON(req, res, response)
+            ResponseJSON(req, res, response)
             return
         }
 
@@ -31,7 +31,7 @@ class ProductController extends Controller {
                 Message: "Error While Creating Product!",
                 Data: null
             }
-            await ResponseJSON(req, res, response)
+            ResponseJSON(req, res, response)
             return
         }
 
@@ -40,11 +40,11 @@ class ProductController extends Controller {
             Message: "Created!",
             Data: ProductCreated
         }
-        await ResponseJSON(req, res, response)
+        ResponseJSON(req, res, response)
         return
     }
 
-    GetProducts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    GetProducts = async (req: Request, res: Response): Promise<void> => {
         let response: ResponseJSON
         const products = await this.productService.GetProducts()
         if (products == null) {
@@ -53,7 +53,7 @@ class ProductController extends Controller {
                 Message: "Empty",
                 Data: products
             }
-            await ResponseJSON(req, res, response)
+            ResponseJSON(req, res, response)
             return
         }
         response = {
@@ -61,11 +61,11 @@ class ProductController extends Controller {
             Message: "Success",
             Code: 200
         }
-        await ResponseJSON(req, res, response)
+        ResponseJSON(req, res, response)
         return
     }
 
-    GetProductsById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    GetProductsById = async (req: Request, res: Response): Promise<void> => {
         let response: ResponseJSON
         const productId: String = req.params.id
 
@@ -76,7 +76,7 @@ class ProductController extends Controller {
                 Message: "Not Found",
                 Data: result,
             }
-            await ResponseJSON(req, res, response)
+            ResponseJSON(req, res, response)
             return
         }
 
@@ -85,12 +85,12 @@ class ProductController extends Controller {
             Message: "Success",
             Data: result,
         }
-        await ResponseJSON(req, res, response)
+        ResponseJSON(req, res, response)
         return
     }
 
 
-    UpdateProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    UpdateProduct = async (req: Request, res: Response): Promise<void> => {
         let response: ResponseJSON
         const productId: String = req.params.id
         let product: IProduct = req.body
@@ -102,7 +102,7 @@ class ProductController extends Controller {
                 Message: isValidate.reason,
                 Data: null
             }
-            await ResponseJSON(req, res, response)
+            ResponseJSON(req, res, response)
             return
         }
 
@@ -114,7 +114,7 @@ class ProductController extends Controller {
                 Message: "Error While Update!",
                 Data: null
             }
-            await ResponseJSON(req, res, response)
+            ResponseJSON(req, res, response)
             return
         }
 
@@ -123,11 +123,11 @@ class ProductController extends Controller {
             Message: "Updated!",
             Data: null
         }
-        await ResponseJSON(req, res, response)
+        ResponseJSON(req, res, response)
         return
     }
 
-    DeleteProducts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    DeleteProducts = async (req: Request, res: Response): Promise<void> => {
         let response: ResponseJSON
         const productId: String = req.params.id
         const deletedProduct = this.productService.DeleteProduct(productId)
@@ -138,7 +138,7 @@ class ProductController extends Controller {
                 Data: null
             }
 
-            await ResponseJSON(req, res, response)
+            ResponseJSON(req, res, response)
             return
         }
         response = {
@@ -146,7 +146,7 @@ class ProductController extends Controller {
             Message: "Deleted!",
             Data: null
         }
-        await ResponseJSON(req, res, response)
+        ResponseJSON(req, res, response)
         return
     }
 }

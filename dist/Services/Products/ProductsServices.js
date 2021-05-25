@@ -57,7 +57,14 @@ class ProductsService extends Services_1.Services {
             return product;
         });
         this.DeleteProduct = (productId) => __awaiter(this, void 0, void 0, function* () {
-            return null;
+            let product;
+            try {
+                product = yield Product_1.Product.findOneAndDelete({ _id: productId });
+            }
+            catch (err) {
+                throw new Error(err);
+            }
+            return product;
         });
     }
 }
