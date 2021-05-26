@@ -7,15 +7,13 @@ var RoutesList;
     RoutesList["User"] = "/users";
 })(RoutesList || (RoutesList = {}));
 exports.RoutesList = RoutesList;
-var Routes = /** @class */ (function () {
-    function Routes(app, name) {
-        var _this = this;
+class Routes {
+    constructor(app, name) {
         this.app = app;
         this.name = name;
-        this.GetRoute = function () {
-            return _this.name;
+        this.GetRoute = () => {
+            return this.name;
         };
     }
-    return Routes;
-}());
+}
 exports.Routes = Routes;

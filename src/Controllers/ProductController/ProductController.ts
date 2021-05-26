@@ -11,81 +11,70 @@ class ProductController extends Controller {
 
     CreateProduct = async (req: Request, res: Response): Promise<void> => {
         // Product Image Base64
-        let response: ResponseJSON
         let product: IProduct = req.body
         const isValidate = Validate(product)
         if (!isValidate.isOk) {
-            response = {
+            ResponseJSON(req, res, {
                 Code: HttpStatusCode.BadRequest,
                 Message: isValidate.reason,
                 Data: null
-            }
-            ResponseJSON(req, res, response)
+            })
             return
         }
 
         const ProductCreated = await this.productService.CreateProduct(product)
         if (ProductCreated == null) {
-            response = {
-                Code: HttpStatusCode.InternalServerError,
-                Message: "Error While Creating Product!",
+            ResponseJSON(req, res, {
+                Code: HttpStatusCode.NotFound,
+                Message: "Not Found!",
                 Data: null
-            }
-            ResponseJSON(req, res, response)
+            })
             return
         }
-
-        response = {
+        ResponseJSON(req, res, {
             Code: HttpStatusCode.Created,
             Message: "Created!",
             Data: ProductCreated
-        }
-        ResponseJSON(req, res, response)
+        })
         return
     }
 
     GetProducts = async (req: Request, res: Response): Promise<void> => {
-        let response: ResponseJSON
         const products = await this.productService.GetProducts()
         if (products == null) {
-            response = {
+            ResponseJSON(req, res, {
                 Code: 404,
                 Message: "Empty",
                 Data: products
-            }
-            ResponseJSON(req, res, response)
+            })
             return
         }
-        response = {
+        ResponseJSON(req, res, {
             Data: products,
             Message: "Success",
             Code: 200
-        }
-        ResponseJSON(req, res, response)
+        })
         return
     }
 
     GetProductsById = async (req: Request, res: Response): Promise<void> => {
-        let response: ResponseJSON
         const productId: String = req.params.id
 
         const result = await this.productService.GetProductsById(productId)
         if (result == null) {
-            response = {
+            ResponseJSON(req, res, {
                 Code: HttpStatusCode.NotFound,
                 Message: "Not Found",
                 Data: result,
-            }
-            ResponseJSON(req, res, response)
+            })
             return
         }
 
-        response = {
+        ResponseJSON(req, res, {
             Code: HttpStatusCode.Ok,
             Message: "Success",
             Data: result,
-        }
-        ResponseJSON(req, res, response)
+        })
         return
     }
 

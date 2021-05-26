@@ -2,13 +2,12 @@ import {JwtMiddleware} from "../../Middleware/JWT/JwtMiddleware";
 import {MongoDB} from "../../Repository/MongoDB/MongoDB";
 import mongoose from "mongoose";
 import {ProductsService} from "../../Services/Products/ProductsServices";
-import ProductController from "../../Controllers/ProductController/ProductController";
 import {Client} from "@elastic/elasticsearch";
 import Elasticsearch from "../../Repository/ElasticSearch/Elasticsearch";
 import Env from "../../Utils/Env/env.config"
 
 
-const Bootstrap = () => {
+const Bootstrap = (): ProductsService => {
     const client = new Client({
         node: Env.ELASTIC_URL
     })
@@ -21,11 +20,11 @@ const Bootstrap = () => {
 
 
 //Products
-    const productService = new ProductsService(mongoDBRepository, elasticSearchRepository, jwtMiddleware)
-    const productController = new ProductController(productService)
     /**.
      * ======== End Bootstrapping ===========
      */
+
+    return new ProductsService(mongoDBRepository, elasticSearchRepository, jwtMiddleware)
 }
 
 

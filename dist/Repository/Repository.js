@@ -7,14 +7,12 @@ var RepoList;
     RepoList["ElasticSearch"] = "ElasticSearch";
 })(RepoList || (RepoList = {}));
 exports.RepoList = RepoList;
-var Repository = /** @class */ (function () {
-    function Repository(_repoName) {
-        var _this = this;
+class Repository {
+    constructor(_repoName) {
         this._repoName = _repoName;
-        this.GetRepoName = function () {
-            return _this._repoName;
+        this.GetRepoName = () => {
+            return this._repoName;
         };
     }
-    return Repository;
-}());
+}
 exports.Repository = Repository;

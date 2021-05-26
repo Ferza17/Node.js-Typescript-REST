@@ -22,23 +22,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var http = __importStar(require("http"));
-var express_1 = __importDefault(require("express"));
-var ResponseUtils_1 = require("../../Utils/Response/ResponseUtils");
-var env_config_1 = __importDefault(require("../../Utils/Env/env.config"));
-var Bootstrap_1 = __importDefault(require("./Bootstrap"));
-var app = express_1.default();
-var server = http.createServer(app);
+const http = __importStar(require("http"));
+const express_1 = __importDefault(require("express"));
+const ResponseUtils_1 = require("../../Utils/Response/ResponseUtils");
+const env_config_1 = __importDefault(require("../../Utils/Env/env.config"));
+const Bootstrap_1 = __importDefault(require("./Bootstrap"));
+const app = express_1.default();
+const server = http.createServer(app);
 /**.
  * ======== Initialize Routes ===========
  */
-var ListRoutes = Bootstrap_1.default(app);
-ListRoutes.forEach(function (route) {
+const ListRoutes = Bootstrap_1.default(app);
+ListRoutes.forEach(route => {
     console.log(route.GetRoute());
     route.initRoutes();
 });
-app.use("/ping", function (req, res) {
-    var data = {
+app.use("/ping", (req, res) => {
+    let data = {
         Code: 200,
         Message: "Pong",
         Data: null
@@ -49,6 +49,6 @@ app.use("/ping", function (req, res) {
 /**.
  * ======== End Initialize Routes ===========
  */
-server.listen(env_config_1.default.APP_PORT, function () {
+server.listen(env_config_1.default.APP_PORT, () => {
     console.log("Server running on PORT : ", env_config_1.default.APP_PORT);
 });

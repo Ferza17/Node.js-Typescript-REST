@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "tsc && node --trace-deprecation  dist/Commands/api/app.js",
-    "api": "tsc && nodemon --trace-deprecation  dist/Commands/api/app.js",
+    "api": "tsc && nodemon  dist/Commands/api/app.js",
     "dev": "tsc && nodemon dist/Commands/api/app.js",
-    "export": "tsc && nodemon dist/Commands/export/app.js"
+    "export": "tsc && node dist/Commands/export/app.js"
   },
   "author": "",
   "license": "ISC",

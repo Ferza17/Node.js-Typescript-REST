@@ -18,7 +18,7 @@ const messageError = {
 class JwtMiddleware {
     JwtRequired = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         const token = req.header("Authorization")
-        if (!token) {
+        if (!token || token == "") {
             ResponseJSON(req, res, {
                 Code: HttpStatusCode.Unauthorized,
                 Message: messageError.UNAUTHORIZED_USER,

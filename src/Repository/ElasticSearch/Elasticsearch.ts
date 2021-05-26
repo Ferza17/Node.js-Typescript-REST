@@ -6,13 +6,8 @@ export default class Elasticsearch extends Repository {
         super(RepoList.ElasticSearch);
     }
 
-    OpenConnection = (): Client => {
+    GetConnection = (): Client => {
         return this.conn
-    }
-
-    CloseConnection = async (): Promise<void> => {
-        await this.conn.close()
-        return
     }
 
     TestConnection = async (): Promise<any> => {

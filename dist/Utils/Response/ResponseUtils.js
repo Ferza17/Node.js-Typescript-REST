@@ -11,7 +11,7 @@ var HttpStatusCode;
     HttpStatusCode[HttpStatusCode["InternalServerError"] = 500] = "InternalServerError";
 })(HttpStatusCode || (HttpStatusCode = {}));
 exports.HttpStatusCode = HttpStatusCode;
-var ResponseJSON = function (req, res, data) {
+const ResponseJSON = (req, res, data) => {
     return res.status(data.Code).json(data);
 };
 exports.ResponseJSON = ResponseJSON;

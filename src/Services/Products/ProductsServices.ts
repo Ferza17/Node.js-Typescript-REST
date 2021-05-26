@@ -1,4 +1,4 @@
-import {Product, IProduct} from "../../Models/Product";
+import {Product, IProduct, ProductMappings} from "../../Models/Product";
 import {Services} from "../Services";
 import {MongoDB} from "../../Repository/MongoDB/MongoDB";
 import {JwtMiddleware} from "../../Middleware/JWT/JwtMiddleware";
@@ -28,33 +28,58 @@ export class ProductsService extends Services {
             product = await Product.findById({_id: productId})
             await this.mongoDB.CloseConnection()
         } catch (err) {
-            throw new Error(err)
+            product = null
+            console.log(err)
         }
         return product
     }
+
     CreateProduct = async (p: IProduct): Promise<IProduct | null> => {
         let product: IProduct | null
+        const conn = this.es.GetConnection()
         try {
+            // Insert to MongoDB
             await this.mongoDB.OpenConnection()
             product = await Product.create(p)
             await this.mongoDB.CloseConnection()
+
+            // Insert to Elasticsearch
+            await conn.index({
+                index: "products",
+                // @ts-ignore
+                id: p._id,
+                body: {
+                    name: p.name,
+                    image: p.image,
+                    price: p.price,
+                    description: p.description,
+                    type: p.type
+                }
+            }, {
+                ignore: [400]
+            })
+            await conn.close()
         } catch (err) {
+            product = null
             throw new Error(err)
         }
 
         return product
     }
+
     UpdateProduct = async (p: IProduct): Promise<IProduct | null> => {
         let product: IProduct | null
         try {
             await this.mongoDB.OpenConnection()
             product = await Product.findOneAndUpdate({_id: p._id}, p).exec()
             await this.mongoDB.CloseConnection()
+
         } catch (err) {
             throw new Error(err)
         }
         return product
     }
+
     DeleteProduct = async (productId: String, token: String | undefined): Promise<any> => {
         let product: IProduct | null
         const identity = this.jwt.GetIdentity(token)
@@ -71,5 +96,50 @@ export class ProductsService extends Services {
             throw new Error(err)
         }
         return product
+    }
+
+    InsertToElasticSearch = async (): Promise<Boolean> => {
+        try {
+            const products: Array<IProduct> = await this.GetProducts()
+            const conn = this.es.GetConnection()
+            // Mappings
+            await conn.indices.create({
+                index: "products",
+                body: {
+                    mappings: {
+                        properties: ProductMappings
+                    }
+                }
+            }, {
+                ignore: [400]
+            })
+            products.map(async (p) => {
+                await conn.index({
+                    index: "products",
+                    // @ts-ignore
+                    id: p._id,
+                    body: {
+                        name: p.name,
+                        image: p.image,
+                        price: p.price,
+                        description: p.description,
+                        type: p.type
+                    }
+                }, {
+                    ignore: [400]
+                }).then(res => {
+                    console.log("Success inserted data with id : ", p._id)
+                }).catch(err => {
+                    console.log(err)
+                    process.kill(process.pid, err)
+                })
+            })
+
+            await conn.close()
+        } catch (err) {
+            throw new Error(err)
+        }
+
+        return true
     }
 }

@@ -3,9 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Validate = exports.Product = void 0;
-var mongoose_1 = __importDefault(require("mongoose"));
-var productSchema = new mongoose_1.default.Schema({
+exports.ProductMappings = exports.Validate = exports.Product = void 0;
+const mongoose_1 = __importDefault(require("mongoose"));
+const productSchema = new mongoose_1.default.Schema({
     name: {
         type: String
     },
@@ -24,11 +24,19 @@ var productSchema = new mongoose_1.default.Schema({
 }, {
     versionKey: false
 });
-var Product = mongoose_1.default.model("products", productSchema);
+const ProductMappings = {
+    name: { type: "keyword" },
+    image: { type: "text" },
+    price: { type: "integer" },
+    description: { type: "keyword" },
+    type: { type: "text" }
+};
+exports.ProductMappings = ProductMappings;
+const Product = mongoose_1.default.model("products", productSchema);
 exports.Product = Product;
 // Custom Validation
-var Validate = function (p) {
-    var val = {
+const Validate = (p) => {
+    let val = {
         isOk: true,
         reason: ""
     };

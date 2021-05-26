@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Validate = exports.User = void 0;
-var mongoose_1 = __importDefault(require("mongoose"));
-var usersSchema = new mongoose_1.default.Schema({
+const mongoose_1 = __importDefault(require("mongoose"));
+const usersSchema = new mongoose_1.default.Schema({
     first_name: {
         type: String,
         required: true
@@ -35,9 +35,9 @@ var Gender;
     Gender["Women"] = "Women";
     Gender["Male"] = "Male";
 })(Gender || (Gender = {}));
-var User = mongoose_1.default.model("users", usersSchema);
+const User = mongoose_1.default.model("users", usersSchema);
 exports.User = User;
-var Validate = function (u) {
+const Validate = (u) => {
     return {
         isOk: true,
         reason: ""

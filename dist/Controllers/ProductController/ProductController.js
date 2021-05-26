@@ -1,236 +1,139 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var ResponseUtils_1 = require("../../Utils/Response/ResponseUtils");
-var Controller_1 = require("../Controller");
-var Product_1 = require("../../Models/Product");
-var ProductController = /** @class */ (function (_super) {
-    __extends(ProductController, _super);
-    function ProductController(productService) {
-        var _this = _super.call(this, productService) || this;
-        _this.productService = productService;
-        _this.CreateProduct = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var response, product, isValidate, ProductCreated;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        product = req.body;
-                        isValidate = Product_1.Validate(product);
-                        if (!isValidate.isOk) {
-                            response = {
-                                Code: ResponseUtils_1.HttpStatusCode.BadRequest,
-                                Message: isValidate.reason,
-                                Data: null
-                            };
-                            ResponseUtils_1.ResponseJSON(req, res, response);
-                            return [2 /*return*/];
-                        }
-                        return [4 /*yield*/, this.productService.CreateProduct(product)];
-                    case 1:
-                        ProductCreated = _a.sent();
-                        if (ProductCreated == null) {
-                            response = {
-                                Code: ResponseUtils_1.HttpStatusCode.InternalServerError,
-                                Message: "Error While Creating Product!",
-                                Data: null
-                            };
-                            ResponseUtils_1.ResponseJSON(req, res, response);
-                            return [2 /*return*/];
-                        }
-                        response = {
-                            Code: ResponseUtils_1.HttpStatusCode.Created,
-                            Message: "Created!",
-                            Data: ProductCreated
-                        };
-                        ResponseUtils_1.ResponseJSON(req, res, response);
-                        return [2 /*return*/];
-                }
+const ResponseUtils_1 = require("../../Utils/Response/ResponseUtils");
+const Controller_1 = require("../Controller");
+const Product_1 = require("../../Models/Product");
+class ProductController extends Controller_1.Controller {
+    constructor(productService) {
+        super(productService);
+        this.productService = productService;
+        this.CreateProduct = async (req, res) => {
+            // Product Image Base64
+            let product = req.body;
+            const isValidate = Product_1.Validate(product);
+            if (!isValidate.isOk) {
+                ResponseUtils_1.ResponseJSON(req, res, {
+                    Code: ResponseUtils_1.HttpStatusCode.BadRequest,
+                    Message: isValidate.reason,
+                    Data: null
+                });
+                return;
+            }
+            const ProductCreated = await this.productService.CreateProduct(product);
+            if (ProductCreated == null) {
+                ResponseUtils_1.ResponseJSON(req, res, {
+                    Code: ResponseUtils_1.HttpStatusCode.NotFound,
+                    Message: "Not Found!",
+                    Data: null
+                });
+                return;
+            }
+            ResponseUtils_1.ResponseJSON(req, res, {
+                Code: ResponseUtils_1.HttpStatusCode.Created,
+                Message: "Created!",
+                Data: ProductCreated
             });
-        }); };
-        _this.GetProducts = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var response, products;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.productService.GetProducts()];
-                    case 1:
-                        products = _a.sent();
-                        if (products == null) {
-                            response = {
-                                Code: 404,
-                                Message: "Empty",
-                                Data: products
-                            };
-                            ResponseUtils_1.ResponseJSON(req, res, response);
-                            return [2 /*return*/];
-                        }
-                        response = {
-                            Data: products,
-                            Message: "Success",
-                            Code: 200
-                        };
-                        ResponseUtils_1.ResponseJSON(req, res, response);
-                        return [2 /*return*/];
-                }
+            return;
+        };
+        this.GetProducts = async (req, res) => {
+            const products = await this.productService.GetProducts();
+            if (products == null) {
+                ResponseUtils_1.ResponseJSON(req, res, {
+                    Code: 404,
+                    Message: "Empty",
+                    Data: products
+                });
+                return;
+            }
+            ResponseUtils_1.ResponseJSON(req, res, {
+                Data: products,
+                Message: "Success",
+                Code: 200
             });
-        }); };
-        _this.GetProductsById = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var response, productId, result;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        productId = req.params.id;
-                        return [4 /*yield*/, this.productService.GetProductsById(productId)];
-                    case 1:
-                        result = _a.sent();
-                        if (result == null) {
-                            response = {
-                                Code: ResponseUtils_1.HttpStatusCode.NotFound,
-                                Message: "Not Found",
-                                Data: result,
-                            };
-                            ResponseUtils_1.ResponseJSON(req, res, response);
-                            return [2 /*return*/];
-                        }
-                        response = {
-                            Code: ResponseUtils_1.HttpStatusCode.Ok,
-                            Message: "Success",
-                            Data: result,
-                        };
-                        ResponseUtils_1.ResponseJSON(req, res, response);
-                        return [2 /*return*/];
-                }
+            return;
+        };
+        this.GetProductsById = async (req, res) => {
+            const productId = req.params.id;
+            const result = await this.productService.GetProductsById(productId);
+            if (result == null) {
+                ResponseUtils_1.ResponseJSON(req, res, {
+                    Code: ResponseUtils_1.HttpStatusCode.NotFound,
+                    Message: "Not Found",
+                    Data: result,
+                });
+                return;
+            }
+            ResponseUtils_1.ResponseJSON(req, res, {
+                Code: ResponseUtils_1.HttpStatusCode.Ok,
+                Message: "Success",
+                Data: result,
             });
-        }); };
-        _this.UpdateProduct = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var response, productId, product, isValidate, data;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        productId = req.params.id;
-                        product = req.body;
-                        isValidate = Product_1.Validate(product);
-                        if (!isValidate.isOk) {
-                            response = {
-                                Code: ResponseUtils_1.HttpStatusCode.BadRequest,
-                                Message: isValidate.reason,
-                                Data: null
-                            };
-                            ResponseUtils_1.ResponseJSON(req, res, response);
-                            return [2 /*return*/];
-                        }
-                        product._id = productId;
-                        return [4 /*yield*/, this.productService.UpdateProduct(product)];
-                    case 1:
-                        data = _a.sent();
-                        if (data == null) {
-                            response = {
-                                Code: ResponseUtils_1.HttpStatusCode.InternalServerError,
-                                Message: "Error While Update!",
-                                Data: null
-                            };
-                            ResponseUtils_1.ResponseJSON(req, res, response);
-                            return [2 /*return*/];
-                        }
-                        response = {
-                            Code: ResponseUtils_1.HttpStatusCode.Ok,
-                            Message: "Updated!",
-                            Data: null
-                        };
-                        ResponseUtils_1.ResponseJSON(req, res, response);
-                        return [2 /*return*/];
-                }
-            });
-        }); };
-        _this.DeleteProducts = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var response, token, productId, deletedProduct;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        token = req.header("Authorization");
-                        productId = req.params.id;
-                        deletedProduct = this.productService.DeleteProduct(productId, token);
-                        if (deletedProduct == null) {
-                            response = {
-                                Code: ResponseUtils_1.HttpStatusCode.BadRequest,
-                                Message: "Error While Deleting Products!",
-                                Data: null
-                            };
-                            ResponseUtils_1.ResponseJSON(req, res, response);
-                            return [2 /*return*/];
-                        }
-                        return [4 /*yield*/, deletedProduct];
-                    case 1:
-                        if ((_a.sent()) == false) {
-                            response = {
-                                Code: ResponseUtils_1.HttpStatusCode.Unauthorized,
-                                Message: "You're not Allowed!",
-                                Data: null
-                            };
-                            ResponseUtils_1.ResponseJSON(req, res, response);
-                            return [2 /*return*/];
-                        }
-                        response = {
-                            Code: ResponseUtils_1.HttpStatusCode.Ok,
-                            Message: "Deleted!",
-                            Data: null
-                        };
-                        ResponseUtils_1.ResponseJSON(req, res, response);
-                        return [2 /*return*/];
-                }
-            });
-        }); };
-        return _this;
+            return;
+        };
+        this.UpdateProduct = async (req, res) => {
+            let response;
+            const productId = req.params.id;
+            let product = req.body;
+            const isValidate = Product_1.Validate(product);
+            if (!isValidate.isOk) {
+                response = {
+                    Code: ResponseUtils_1.HttpStatusCode.BadRequest,
+                    Message: isValidate.reason,
+                    Data: null
+                };
+                ResponseUtils_1.ResponseJSON(req, res, response);
+                return;
+            }
+            product._id = productId;
+            const data = await this.productService.UpdateProduct(product);
+            if (data == null) {
+                response = {
+                    Code: ResponseUtils_1.HttpStatusCode.InternalServerError,
+                    Message: "Error While Update!",
+                    Data: null
+                };
+                ResponseUtils_1.ResponseJSON(req, res, response);
+                return;
+            }
+            response = {
+                Code: ResponseUtils_1.HttpStatusCode.Ok,
+                Message: "Updated!",
+                Data: null
+            };
+            ResponseUtils_1.ResponseJSON(req, res, response);
+            return;
+        };
+        this.DeleteProducts = async (req, res) => {
+            let response;
+            const token = req.header("Authorization");
+            const productId = req.params.id;
+            const deletedProduct = this.productService.DeleteProduct(productId, token);
+            if (deletedProduct == null) {
+                response = {
+                    Code: ResponseUtils_1.HttpStatusCode.BadRequest,
+                    Message: "Error While Deleting Products!",
+                    Data: null
+                };
+                ResponseUtils_1.ResponseJSON(req, res, response);
+                return;
+            }
+            if (await deletedProduct == false) {
+                response = {
+                    Code: ResponseUtils_1.HttpStatusCode.Unauthorized,
+                    Message: "You're not Allowed!",
+                    Data: null
+                };
+                ResponseUtils_1.ResponseJSON(req, res, response);
+                return;
+            }
+            response = {
+                Code: ResponseUtils_1.HttpStatusCode.Ok,
+                Message: "Deleted!",
+                Data: null
+            };
+            ResponseUtils_1.ResponseJSON(req, res, response);
+            return;
+        };
     }
-    return ProductController;
-}(Controller_1.Controller));
+}
 exports.default = ProductController;

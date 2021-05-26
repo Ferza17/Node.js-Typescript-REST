@@ -12,8 +12,8 @@ class ProductRoutes extends Routes {
     initRoutes(): express.Application {
         this.app.routes = [
             this.app.route(RoutesList.Product)
-                .post(this.jwt.JwtRequired, this.productCtrl.CreateProduct)
-                .get(this.jwt.JwtRequired, this.productCtrl.GetProducts),
+                .get(this.jwt.JwtRequired, this.productCtrl.GetProducts)
+                .post(this.jwt.JwtRequired, this.productCtrl.CreateProduct),
             this.app.route(RoutesList.Product + "/:id")
                 .get(this.jwt.JwtRequired, this.productCtrl.GetProductsById)
                 .put(this.jwt.JwtRequired, this.productCtrl.UpdateProduct)

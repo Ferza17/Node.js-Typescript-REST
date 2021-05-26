@@ -20,6 +20,14 @@ const productSchema = new mongoose.Schema({
     versionKey: false
 })
 
+const ProductMappings = {
+    name: {type: "keyword"},
+    image: {type: "text"},
+    price: {type: "integer"},
+    description: {type: "keyword"},
+    type: {type: "text"}
+}
+
 type validateReason = {
     isOk: Boolean,
     reason: String
@@ -72,6 +80,7 @@ export {
     Product,
     IProduct,
     Validate,
+    ProductMappings
 }
 
 

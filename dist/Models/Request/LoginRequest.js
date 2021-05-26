@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ValidateLoginRequest = void 0;
-var ValidateLoginRequest = function (l) {
+const ValidateLoginRequest = (l) => {
     if (l.email == "") {
         return {
             reason: "Please Provide Phone Email!",
