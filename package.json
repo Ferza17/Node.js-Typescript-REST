@@ -5,7 +5,10 @@
   "main": "./dist/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && nodemon dist/app.js"
+    "start": "tsc && node --trace-deprecation  dist/Commands/api/app.js",
+    "api": "tsc && nodemon --trace-deprecation  dist/Commands/api/app.js",
+    "dev": "tsc && nodemon dist/Commands/api/app.js",
+    "export": "tsc && nodemon dist/Commands/export/app.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +18,7 @@
     "nodemon": "^2.0.7"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^7.12.0",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "dotenv": "^10.0.0",

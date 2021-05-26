@@ -8,6 +8,7 @@ class ProductController extends Controller {
     constructor(private productService: ProductsService) {
         super(productService);
     }
+
     CreateProduct = async (req: Request, res: Response): Promise<void> => {
         // Product Image Base64
         let response: ResponseJSON
@@ -128,8 +129,9 @@ class ProductController extends Controller {
 
     DeleteProducts = async (req: Request, res: Response): Promise<void> => {
         let response: ResponseJSON
+        const token: string | undefined = req.header("Authorization")
         const productId: String = req.params.id
-        const deletedProduct = this.productService.DeleteProduct(productId)
+        const deletedProduct = this.productService.DeleteProduct(productId, token)
         if (deletedProduct == null) {
             response = {
                 Code: HttpStatusCode.BadRequest,
@@ -140,6 +142,18 @@ class ProductController extends Controller {
             ResponseJSON(req, res, response)
             return
         }
+
+        if (await deletedProduct == false) {
+            response = {
+                Code: HttpStatusCode.Unauthorized,
+                Message: "You're not Allowed!",
+                Data: null
+            }
+
+            ResponseJSON(req, res, response)
+            return
+        }
+
         response = {
             Code: HttpStatusCode.Ok,
             Message: "Deleted!",

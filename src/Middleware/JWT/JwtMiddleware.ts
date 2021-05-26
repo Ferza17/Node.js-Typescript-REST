@@ -40,15 +40,15 @@ class JwtMiddleware {
                 return
             }
 
-            const userRole:Boolean = this.checkRole(decodeToken)
-            if (!userRole){
-                ResponseJSON(req, res, {
-                    Code: HttpStatusCode.Unauthorized,
-                    Message: messageError.UNAUTHORIZED_USER,
-                    Data: null
-                })
-                return
-            }
+            // const userRole: Boolean = this.checkRole(decodeToken)
+            // if (!userRole) {
+            //     ResponseJSON(req, res, {
+            //         Code: HttpStatusCode.Unauthorized,
+            //         Message: messageError.UNAUTHORIZED_USER,
+            //         Data: null
+            //     })
+            //     return
+            // }
         } catch (err) {
             ResponseJSON(req, res, {
                 Code: HttpStatusCode.BadRequest,
@@ -78,9 +78,8 @@ class JwtMiddleware {
         return tokenHash
     }
 
-    GetIdentity = (token: String): ITokenIdentity => {
+    GetIdentity = (token: String | undefined): ITokenIdentity => {
         let identity: ITokenIdentity
-
         try {
             // @ts-ignore
             identity = decode(token, env.JWT_SECRET_KEY, false, env.JWT_ALGORITHM)
@@ -97,8 +96,12 @@ class JwtMiddleware {
         return token.expires > now;
     }
 
-    checkRole = (token: ITokenIdentity): Boolean => {
+    CheckRole = (token: ITokenIdentity): Boolean => {
         return token.role == "Admin"
+    }
+
+    RefreshToken = (req: Request, res: Response) => {
+        //TODO Create Refresh token when token is in 30 minute
     }
 }
 

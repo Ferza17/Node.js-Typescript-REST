@@ -1,10 +1,10 @@
-import {Repository} from "../Repository";
+import {RepoList, Repository} from "../Repository";
 import env from "../../Utils/Env/env.config"
 import mongoose from "mongoose"
 
 export class MongoDB extends Repository {
     constructor(private conn: mongoose.Mongoose) {
-        super();
+        super(RepoList.MongoDB);
     }
 
     OpenConnection = async () => {
@@ -13,7 +13,8 @@ export class MongoDB extends Repository {
             await this.conn.connect(env.MONGODB_URL, {
                 useCreateIndex: true,
                 useFindAndModify: false,
-                useUnifiedTopology: true
+                useUnifiedTopology: true,
+                useNewUrlParser: true
             })
         } catch (err) {
             throw new Error(err)
@@ -26,6 +27,17 @@ export class MongoDB extends Repository {
         } catch (err) {
             throw new Error(err)
         }
+    }
+
+    TestConnection = async (): Promise<any> => {
+        let connection: any
+        try {
+            connection = this.conn.version
+        } catch (err) {
+            throw new Error(err)
+        }
+
+        return connection
     }
 
 
