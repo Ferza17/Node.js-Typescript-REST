@@ -9,14 +9,15 @@ export class ProductsService extends Services {
         super(mongoDB);
     }
 
-    GetProducts = async (): Promise<Array<IProduct>> => {
-        let products: IProduct[]
+    GetProducts = async (): Promise<Array<IProduct> | null> => {
+        let products: Array<IProduct> | null
         try {
             await this.mongoDB.OpenConnection()
             products = await Product.find({}).exec()
             await this.mongoDB.CloseConnection()
         } catch (err) {
-            throw new Error(err)
+            products = null
+            console.log(err)
         }
         return products
     }
@@ -61,7 +62,7 @@ export class ProductsService extends Services {
             await conn.close()
         } catch (err) {
             product = null
-            throw new Error(err)
+            console.log(err)
         }
 
         return product
@@ -75,7 +76,8 @@ export class ProductsService extends Services {
             await this.mongoDB.CloseConnection()
 
         } catch (err) {
-            throw new Error(err)
+            console.log(err)
+            product = null
         }
         return product
     }
@@ -93,14 +95,15 @@ export class ProductsService extends Services {
             product = await Product.findOneAndDelete({_id: productId})
             await this.mongoDB.CloseConnection()
         } catch (err) {
-            throw new Error(err)
+            console.log(err)
+            product = null
         }
         return product
     }
 
     InsertToElasticSearch = async (): Promise<Boolean> => {
         try {
-            const products: Array<IProduct> = await this.GetProducts()
+            const products: Array<IProduct> | null = await this.GetProducts()
             const conn = this.es.GetConnection()
             // Mappings
             await conn.indices.create({
@@ -113,6 +116,10 @@ export class ProductsService extends Services {
             }, {
                 ignore: [400]
             })
+            //TODO: id in es is not equal with data in MongoDB
+            if (products == null) {
+                return false
+            }
             products.map(async (p) => {
                 await conn.index({
                     index: "products",
@@ -137,7 +144,8 @@ export class ProductsService extends Services {
 
             await conn.close()
         } catch (err) {
-            throw new Error(err)
+            console.log(err)
+            return false
         }
 
         return true
