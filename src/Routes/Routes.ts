@@ -1,5 +1,4 @@
 import express from "express";
-import JwtMiddleware from "../Middleware/JWT/JwtMiddleware";
 
 
 enum RoutesList {
@@ -9,10 +8,10 @@ enum RoutesList {
 
 abstract class Routes {
 
-    protected constructor(protected app: express.Application, jwt: JwtMiddleware, protected name: string) {
+    protected constructor(protected app: express.Application, protected name: string) {
     }
 
-    getName = (): string => {
+    GetRoute = (): string => {
         return this.name
     }
 

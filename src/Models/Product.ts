@@ -71,7 +71,7 @@ const Validate = (p: IProduct): validateReason => {
 export {
     Product,
     IProduct,
-    Validate
+    Validate,
 }
 
 

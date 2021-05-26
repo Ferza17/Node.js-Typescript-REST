@@ -1,15 +1,64 @@
-type UserType =  {
-    Id: string
-    Password: string
-    Name: string
+import mongoose, {Document} from "mongoose"
+
+const usersSchema = new mongoose.Schema({
+    first_name: {
+        type: String,
+        required: true
+    },
+    last_name: {
+        type: String
+    },
+    email: {
+        type: String,
+        required: true
+
+    },
+    gender: {
+        type: String,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    role: {
+        type: String,
+        required: true
+    }
+})
+
+type validateReason = {
+    isOk: Boolean,
+    reason: String
 }
 
-interface User {
-    user: UserType
-    Validate: (u : UserType) => boolean
+
+enum Gender {
+    Women = "Women",
+    Male = "Male"
 }
 
-export type UserModel =  {
-    User: User,
-    UserType: UserType
+interface IUser extends Document {
+    _id: String,
+    first_name: String,
+    last_name: String,
+    email: String,
+    gender: Gender,
+    password: String,
+    role: String
+}
+
+const User = mongoose.model<IUser>("users", usersSchema)
+
+const Validate = (u: IUser): validateReason => {
+    return {
+        isOk: true,
+        reason: ""
+    }
+}
+
+export {
+    User,
+    IUser,
+    Validate
 }

@@ -1,4 +1,6 @@
+import {Services} from "../Services/Services"
+
 export abstract class Controller {
-    protected constructor() {
+    protected constructor(srv: Services) {
     }
 }

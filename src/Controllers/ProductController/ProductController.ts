@@ -1,4 +1,4 @@
-import { Request, Response} from "express"
+import {Request, Response} from "express"
 import {HttpStatusCode, ResponseJSON} from "../../Utils/Response/ResponseUtils"
 import {Controller} from "../Controller";
 import {ProductsService} from "../../Services/Products/ProductsServices";
@@ -6,9 +6,8 @@ import {IProduct, Validate} from "../../Models/Product"
 
 class ProductController extends Controller {
     constructor(private productService: ProductsService) {
-        super();
+        super(productService);
     }
-
     CreateProduct = async (req: Request, res: Response): Promise<void> => {
         // Product Image Base64
         let response: ResponseJSON
@@ -149,6 +148,7 @@ class ProductController extends Controller {
         ResponseJSON(req, res, response)
         return
     }
+
 }
 
 

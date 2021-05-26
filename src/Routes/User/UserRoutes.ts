@@ -1,12 +1,22 @@
-import {Router} from "express-serve-static-core";
-import JwtMiddleware from "../../Middleware/JWT/JwtMiddleware";
+import {JwtMiddleware} from "../../Middleware/JWT/JwtMiddleware";
+import {Routes, RoutesList} from "../Routes";
+import UserController from "../../Controllers/UserController/UserController";
+import express from "express";
 
-class UserRoutes {
-    constructor(private jwt: JwtMiddleware,public router: Router) {
+class UserRoutes extends Routes {
+    constructor(app: express.Application, private jwt: JwtMiddleware, private ctrl: UserController) {
+        super(app, RoutesList.User);
     }
-    GetProductRoutes() {
-        console.log("User Routes")
-        // this.middleware.jwt.JwtRequired()
+
+    initRoutes(): express.Application {
+        let app: express.Application = this.app
+        app.routes = [
+            app.route(`${RoutesList.User}/login`)
+                .post(this.ctrl.UserLogin),
+            app.route(`${RoutesList.User}/profile`)
+                .get(this.jwt.JwtRequired)
+        ]
+        return app
     }
 }
 
