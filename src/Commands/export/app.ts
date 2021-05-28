@@ -8,11 +8,11 @@ import Bootstrap from "./Bootstrap";
 const main = async (): Promise<void> => {
     console.log("Inserting data To Elasticsearch")
     const product = Bootstrap()
-    // const isInserted: Boolean = await product.InsertToElasticSearch()
+    const isInserted: Boolean = await product.InsertToElasticSearch()
     await product.InsertToElasticSearch()
-    // if (!isInserted) {
-    //
-    // }
+    if (!isInserted) {
+        process.kill(process.pid, "Error While inserting data")
+    }
 }
 
 main().then(res => {

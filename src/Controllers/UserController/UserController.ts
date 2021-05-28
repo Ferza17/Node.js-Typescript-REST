@@ -5,7 +5,7 @@ import ILoginResponse from "../../Models/Response/LoginResponse";
 import {ILoginRequest, ValidateLoginRequest} from "../../Models/Request/LoginRequest";
 import {HttpStatusCode, ResponseJSON} from "../../Utils/Response/ResponseUtils";
 
-class UserController extends Controller {
+export default class UserController extends Controller {
     constructor(private userService: UsersServices) {
         super(userService);
     }
@@ -42,6 +42,3 @@ class UserController extends Controller {
         return
     }
 }
-
-
-export default UserController

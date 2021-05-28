@@ -1,11 +1,11 @@
 import {Request, Response} from "express"
 import {HttpStatusCode, ResponseJSON} from "../../Utils/Response/ResponseUtils"
 import {Controller} from "../Controller";
-import {ProductsService} from "../../Services/Products/ProductsServices";
+import ProductServices from "../../Services/Products/ProductsServices";
 import {IProduct, Validate} from "../../Models/Product"
 
-class ProductController extends Controller {
-    constructor(private productService: ProductsService) {
+export default class ProductController extends Controller {
+    constructor(private productService: ProductServices) {
         super(productService);
     }
 
@@ -153,6 +153,3 @@ class ProductController extends Controller {
     }
 
 }
-
-
-export default ProductController

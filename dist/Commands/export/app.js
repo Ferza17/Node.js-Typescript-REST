@@ -12,11 +12,11 @@ const Bootstrap_1 = __importDefault(require("./Bootstrap"));
 const main = async () => {
     console.log("Inserting data To Elasticsearch");
     const product = Bootstrap_1.default();
-    // const isInserted: Boolean = await product.InsertToElasticSearch()
+    const isInserted = await product.InsertToElasticSearch();
     await product.InsertToElasticSearch();
-    // if (!isInserted) {
-    //
-    // }
+    if (!isInserted) {
+        process.kill(process.pid, "Error While inserting data");
+    }
 };
 main().then(res => {
     console.log("Success");

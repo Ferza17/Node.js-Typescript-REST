@@ -7,7 +7,7 @@ const body_parser_1 = require("body-parser");
 const JwtMiddleware_1 = require("../../Middleware/JWT/JwtMiddleware");
 const MongoDB_1 = require("../../Repository/MongoDB/MongoDB");
 const mongoose_1 = __importDefault(require("mongoose"));
-const ProductsServices_1 = require("../../Services/Products/ProductsServices");
+const ProductsServices_1 = __importDefault(require("../../Services/Products/ProductsServices"));
 const ProductController_1 = __importDefault(require("../../Controllers/ProductController/ProductController"));
 const ProductRoutes_1 = __importDefault(require("../../Routes/Product/ProductRoutes"));
 const UsersServices_1 = require("../../Services/Users/UsersServices");
@@ -40,7 +40,7 @@ const Bootstrap = (app) => {
     //     console.log(err)
     // })
     //Products Initialize
-    const productService = new ProductsServices_1.ProductsService(mongoDBRepository, elasticSearchRepository, jwtMiddleware);
+    const productService = new ProductsServices_1.default(mongoDBRepository, elasticSearchRepository, jwtMiddleware);
     const productController = new ProductController_1.default(productService);
     const productRoutes = new ProductRoutes_1.default(app, jwtMiddleware, productController);
     Routes.push(productRoutes);

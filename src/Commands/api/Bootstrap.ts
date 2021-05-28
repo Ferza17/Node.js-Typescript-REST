@@ -3,7 +3,7 @@ import {json} from "body-parser";
 import {JwtMiddleware} from "../../Middleware/JWT/JwtMiddleware";
 import {MongoDB} from "../../Repository/MongoDB/MongoDB";
 import mongoose from "mongoose";
-import {ProductsService} from "../../Services/Products/ProductsServices";
+import ProductsService from "../../Services/Products/ProductsServices";
 import ProductController from "../../Controllers/ProductController/ProductController";
 import ProductRoutes from "../../Routes/Product/ProductRoutes";
 import {UsersServices} from "../../Services/Users/UsersServices";

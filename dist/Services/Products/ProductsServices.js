@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductsService = void 0;
 const Product_1 = require("../../Models/Product");
 const Services_1 = require("../Services");
 class ProductsService extends Services_1.Services {
@@ -17,7 +16,8 @@ class ProductsService extends Services_1.Services {
                 await this.mongoDB.CloseConnection();
             }
             catch (err) {
-                throw new Error(err);
+                products = null;
+                console.log(err);
             }
             return products;
         };
@@ -61,7 +61,7 @@ class ProductsService extends Services_1.Services {
             }
             catch (err) {
                 product = null;
-                throw new Error(err);
+                console.log(err);
             }
             return product;
         };
@@ -73,7 +73,8 @@ class ProductsService extends Services_1.Services {
                 await this.mongoDB.CloseConnection();
             }
             catch (err) {
-                throw new Error(err);
+                console.log(err);
+                product = null;
             }
             return product;
         };
@@ -89,14 +90,15 @@ class ProductsService extends Services_1.Services {
                 await this.mongoDB.CloseConnection();
             }
             catch (err) {
-                throw new Error(err);
+                console.log(err);
+                product = null;
             }
             return product;
         };
         this.InsertToElasticSearch = async () => {
+            const products = await this.GetProducts();
+            const conn = this.es.GetConnection();
             try {
-                const products = await this.GetProducts();
-                const conn = this.es.GetConnection();
                 // Mappings
                 await conn.indices.create({
                     index: "products",
@@ -108,11 +110,15 @@ class ProductsService extends Services_1.Services {
                 }, {
                     ignore: [400]
                 });
+                //TODO: id in es is not equal with data in MongoDB
+                if (products == null) {
+                    return false;
+                }
                 products.map(async (p) => {
                     await conn.index({
-                        index: "products",
                         // @ts-ignore
                         id: p._id,
+                        index: "products",
                         body: {
                             name: p.name,
                             image: p.image,
@@ -122,20 +128,20 @@ class ProductsService extends Services_1.Services {
                         }
                     }, {
                         ignore: [400]
-                    }).then(res => {
-                        console.log("Success inserted data with id : ", p._id);
-                    }).catch(err => {
-                        console.log(err);
-                        process.kill(process.pid, err);
                     });
+                    console.log("Success inserted data with id : ", p._id);
                 });
-                await conn.close();
             }
             catch (err) {
-                throw new Error(err);
+                console.log(err);
+                return false;
             }
+            await conn.close();
             return true;
+        };
+        this.SearchProducts = async (searchRequest) => {
+            return null;
         };
     }
 }
-exports.ProductsService = ProductsService;
+exports.default = ProductsService;

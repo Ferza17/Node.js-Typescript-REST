@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const JwtMiddleware_1 = require("../../Middleware/JWT/JwtMiddleware");
 const MongoDB_1 = require("../../Repository/MongoDB/MongoDB");
 const mongoose_1 = __importDefault(require("mongoose"));
-const ProductsServices_1 = require("../../Services/Products/ProductsServices");
+const ProductsServices_1 = __importDefault(require("../../Services/Products/ProductsServices"));
 const elasticsearch_1 = require("@elastic/elasticsearch");
 const Elasticsearch_1 = __importDefault(require("../../Repository/ElasticSearch/Elasticsearch"));
 const env_config_1 = __importDefault(require("../../Utils/Env/env.config"));
@@ -24,6 +24,6 @@ const Bootstrap = () => {
     /**.
      * ======== End Bootstrapping ===========
      */
-    return new ProductsServices_1.ProductsService(mongoDBRepository, elasticSearchRepository, jwtMiddleware);
+    return new ProductsServices_1.default(mongoDBRepository, elasticSearchRepository, jwtMiddleware);
 };
 exports.default = Bootstrap;

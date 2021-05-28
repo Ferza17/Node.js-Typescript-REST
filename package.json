@@ -5,12 +5,11 @@
   "main": "./dist/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && node --trace-deprecation  dist/Commands/api/app.js",
-    "api": "tsc && nodemon  dist/Commands/api/app.js",
+    "api": "tsc && node dist/Commands/api/app.js",
     "dev": "tsc && nodemon dist/Commands/api/app.js",
     "export": "tsc && node dist/Commands/export/app.js"
   },
-  "author": "",
+  "author": "Fery Reza Aditya",
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^4.17.11",

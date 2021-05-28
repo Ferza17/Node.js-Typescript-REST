@@ -1,0 +1,17 @@
+{
+  "name": {
+    "type": "keyword"
+  },
+  "image": {
+    "type": "text"
+  },
+  "price": {
+    "type": "integer"
+  },
+  "description": {
+    "type": "keyword"
+  },
+  "type": {
+    "type": "text"
+  }
+}

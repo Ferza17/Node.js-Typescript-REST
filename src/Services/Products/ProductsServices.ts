@@ -3,8 +3,9 @@ import {Services} from "../Services";
 import {MongoDB} from "../../Repository/MongoDB/MongoDB";
 import {JwtMiddleware} from "../../Middleware/JWT/JwtMiddleware";
 import Elasticsearch from "../../Repository/ElasticSearch/Elasticsearch";
+import {ISearchRequest} from "../../Models/Request/SearchRequest";
 
-export class ProductsService extends Services {
+export default class ProductsService extends Services {
     constructor(private mongoDB: MongoDB, private es: Elasticsearch, private jwt: JwtMiddleware) {
         super(mongoDB);
     }
@@ -102,9 +103,9 @@ export class ProductsService extends Services {
     }
 
     InsertToElasticSearch = async (): Promise<Boolean> => {
+        const products: Array<IProduct> | null = await this.GetProducts()
+        const conn = this.es.GetConnection()
         try {
-            const products: Array<IProduct> | null = await this.GetProducts()
-            const conn = this.es.GetConnection()
             // Mappings
             await conn.indices.create({
                 index: "products",
@@ -122,9 +123,9 @@ export class ProductsService extends Services {
             }
             products.map(async (p) => {
                 await conn.index({
-                    index: "products",
                     // @ts-ignore
                     id: p._id,
+                    index: "products",
                     body: {
                         name: p.name,
                         image: p.image,
@@ -134,20 +135,21 @@ export class ProductsService extends Services {
                     }
                 }, {
                     ignore: [400]
-                }).then(res => {
-                    console.log("Success inserted data with id : ", p._id)
-                }).catch(err => {
-                    console.log(err)
-                    process.kill(process.pid, err)
                 })
+                console.log("Success inserted data with id : ", p._id)
+
             })
 
-            await conn.close()
         } catch (err) {
             console.log(err)
             return false
         }
-
+        await conn.close()
         return true
+    }
+
+    SearchProducts = async (searchRequest: ISearchRequest): Promise<Array<IProduct> | null> => {
+
+        return null
     }
 }
