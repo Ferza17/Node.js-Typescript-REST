@@ -13,20 +13,20 @@
 * ### export
   ``` npm run export ```
   <br>
-  is used for exporting data from MongoDB and Import to Elasticsearch.
+  used for exporting data from MongoDB and Import to Elasticsearch.
 
 * ### api
   ```npm run api```
   <br>
   <br>
-  is used for transportation your data via http request
+  used for transportation your data via http request
   some api must have authentication, to get token you can use 
   route ```/user/login```
 
 * ### dev
   ``` npm run dev ```
   <br>
-  is used for developing these apps.
+  used for developing these apps.
 
 have any question ? <br>
 please send me by e-mail : feryreza.aditya@gmail.com
