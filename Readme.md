@@ -19,9 +19,9 @@
   ```npm run api```
   <br>
   <br>
-  used for transportation your data via http request
+  used for run your REST API.
   some api must have authentication, to get token you can use 
-  route ```/user/login```
+  route ```/user/login```.
 
 * ### dev
   ``` npm run dev ```
