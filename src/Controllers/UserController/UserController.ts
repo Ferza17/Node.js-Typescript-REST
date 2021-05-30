@@ -6,15 +6,19 @@ import IProfileResponse from "../../Models/Response/ProfileResponse"
 import LoginRequestModel from "../../Models/Request/LoginRequest";
 import ResponseUtil from "../../Utils/Response/ResponseUtils";
 import JwtMiddleware from "../../Middleware/JWT/JwtMiddleware";
+import UserModel from "../../Models/User";
+import IUser = UserModel.IUser;
+import TokenIdentity from "../../Models/TokenIdentity";
 
 export default class UserController extends Controller {
-    constructor(private userService: UsersServices, private jwt: JwtMiddleware.Jwt) {
-        super(userService);
+    constructor(private _userService: UsersServices, private _jwt: JwtMiddleware.Jwt) {
+        super(_userService, _jwt);
     }
 
     UserLogin = async (req: Express.Request, res: Express.Response): Promise<void> => {
         let result: ILoginResponse | null
         let userLoginData: LoginRequestModel.ILoginRequest = req.body
+        let user: IUser | null
 
         let validate = LoginRequestModel.ValidateLoginRequest(userLoginData)
         if (!validate.isOk) {
@@ -25,15 +29,28 @@ export default class UserController extends Controller {
             })
             return
         }
-        result = await this.userService.UserLogin(userLoginData)
 
-        if (result == null) {
+        user = await this._userService.UserLogin(userLoginData)
+        if (user == null) {
             ResponseUtil.ResponseJSON(req, res, {
                 Code: ResponseUtil.HttpStatusCode.NotFound,
                 Message: "User Not Found",
                 Data: null
             })
             return
+        }
+
+        const token: String | null = this._jwt.CreateToken(user)
+        if (token == null) {
+            ResponseUtil.ResponseJSON(req, res, {
+                Code: ResponseUtil.HttpStatusCode.InternalServerError,
+                Message: "Error while Creating token",
+                Data: null
+            })
+        }
+
+        result = {
+            token: token
         }
 
         ResponseUtil.ResponseJSON(req, res, {
@@ -46,7 +63,7 @@ export default class UserController extends Controller {
 
     UserProfile = async (req: Express.Request, res: Express.Response): Promise<void> => {
         let result: IProfileResponse | null
-        const identity: JwtMiddleware.ITokenIdentity | null = this.jwt.GetIdentity(req.header('Authorization'))
+        const identity: TokenIdentity | null = this._jwt.GetIdentity(req.header('Authorization'))
         if (identity == null) {
             ResponseUtil.ResponseJSON(req, res, {
                 Code: ResponseUtil.HttpStatusCode.BadRequest,
@@ -56,7 +73,7 @@ export default class UserController extends Controller {
             return
         }
 
-        result = await this.userService.GetUserProfile(identity)
+        result = await this._userService.GetUserProfile(identity)
         if (result == null) {
             ResponseUtil.ResponseJSON(req, res, {
                 Code: ResponseUtil.HttpStatusCode.InternalServerError,

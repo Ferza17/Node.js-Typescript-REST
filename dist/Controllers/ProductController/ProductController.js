@@ -7,9 +7,10 @@ const ResponseUtils_1 = __importDefault(require("../../Utils/Response/ResponseUt
 const Controller_1 = __importDefault(require("../Controller"));
 const Product_1 = __importDefault(require("../../Models/Product"));
 class ProductController extends Controller_1.default {
-    constructor(productService) {
-        super(productService);
-        this.productService = productService;
+    constructor(_productService, _jwt) {
+        super(_productService, _jwt);
+        this._productService = _productService;
+        this._jwt = _jwt;
         this.CreateProduct = async (req, res) => {
             // Product Image Base64
             let product = req.body;
@@ -22,7 +23,7 @@ class ProductController extends Controller_1.default {
                 });
                 return;
             }
-            const ProductCreated = await this.productService.CreateProduct(product);
+            const ProductCreated = await this._productService.CreateProduct(product);
             if (ProductCreated == null) {
                 ResponseUtils_1.default.ResponseJSON(req, res, {
                     Code: ResponseUtils_1.default.HttpStatusCode.NotFound,
@@ -39,7 +40,7 @@ class ProductController extends Controller_1.default {
             return;
         };
         this.GetProducts = async (req, res) => {
-            const products = await this.productService.GetProducts();
+            const products = await this._productService.GetProducts();
             if (products == null) {
                 ResponseUtils_1.default.ResponseJSON(req, res, {
                     Code: 404,
@@ -57,7 +58,7 @@ class ProductController extends Controller_1.default {
         };
         this.GetProductsById = async (req, res) => {
             const productId = req.params.id;
-            const result = await this.productService.GetProductsById(productId);
+            const result = await this._productService.GetProductsById(productId);
             if (result == null) {
                 ResponseUtils_1.default.ResponseJSON(req, res, {
                     Code: ResponseUtils_1.default.HttpStatusCode.NotFound,
@@ -86,7 +87,7 @@ class ProductController extends Controller_1.default {
                 return;
             }
             product._id = productId;
-            const data = await this.productService.UpdateProduct(product);
+            const data = await this._productService.UpdateProduct(product);
             if (data == null) {
                 ResponseUtils_1.default.ResponseJSON(req, res, {
                     Code: ResponseUtils_1.default.HttpStatusCode.InternalServerError,
@@ -105,7 +106,16 @@ class ProductController extends Controller_1.default {
         this.DeleteProducts = async (req, res) => {
             const token = req.header("Authorization");
             const productId = req.params.id;
-            const deletedProduct = this.productService.DeleteProduct(productId, token);
+            const identity = this._jwt.GetIdentity(token);
+            if (identity == null) {
+                ResponseUtils_1.default.ResponseJSON(req, res, {
+                    Code: ResponseUtils_1.default.HttpStatusCode.Unauthorized,
+                    Message: "Unauthorized user!",
+                    Data: null
+                });
+                return;
+            }
+            const deletedProduct = this._productService.DeleteProduct(productId, identity);
             if (deletedProduct == null) {
                 ResponseUtils_1.default.ResponseJSON(req, res, {
                     Code: ResponseUtils_1.default.HttpStatusCode.BadRequest,

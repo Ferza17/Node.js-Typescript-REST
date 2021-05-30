@@ -34,12 +34,12 @@ const Bootstrap = (app) => {
     const elasticSearchRepository = new Elasticsearch_1.default(client);
     Repos.push(elasticSearchRepository);
     //Products Initialize
-    const productService = new ProductsServices_1.default(mongoDBRepository, elasticSearchRepository, jwtMiddleware);
-    const productController = new ProductController_1.default(productService);
+    const productService = new ProductsServices_1.default(mongoDBRepository, elasticSearchRepository);
+    const productController = new ProductController_1.default(productService, jwtMiddleware);
     const productRoutes = new ProductRoutes_1.default(app, jwtMiddleware, productController);
     Routes.push(productRoutes);
     //Users Initialize
-    const userService = new UsersServices_1.default(mongoDBRepository, jwtMiddleware);
+    const userService = new UsersServices_1.default(mongoDBRepository);
     const userController = new UserController_1.default(userService, jwtMiddleware);
     const userRoutes = new UserRoutes_1.default(app, jwtMiddleware, userController);
     Routes.push(userRoutes);

@@ -6,15 +6,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Services_1 = __importDefault(require("../Services"));
 const User_1 = __importDefault(require("../../Models/User"));
 class UsersServices extends Services_1.default {
-    constructor(mongoDB, jwt) {
-        super(mongoDB);
-        this.mongoDB = mongoDB;
-        this.jwt = jwt;
+    constructor(_mongoDB) {
+        super(_mongoDB);
+        this._mongoDB = _mongoDB;
         this.GetUserProfile = async (identity) => {
             let result;
             let userFind;
             try {
-                await this.mongoDB.OpenConnection();
+                await this._mongoDB.OpenConnection();
                 // @ts-ignore
                 userFind = await User_1.default.User.findOne({ _id: identity.userId });
                 if (userFind == null) {
@@ -32,37 +31,28 @@ class UsersServices extends Services_1.default {
                 };
             }
             catch (err) {
-                console.log(err);
+                console.debug(err);
                 result = null;
             }
-            await this.mongoDB.CloseConnection();
+            await this._mongoDB.CloseConnection();
             return result;
         };
         this.UserLogin = async (user) => {
-            let result;
             let userFind;
             try {
-                await this.mongoDB.OpenConnection();
+                await this._mongoDB.OpenConnection();
                 // @ts-ignore
                 userFind = await User_1.default.User.findOne({ email: user.email, password: user.password });
                 if (userFind == null) {
-                    result = null;
+                    userFind = null;
                 }
-                const token = this.jwt.CreateToken({
-                    role: userFind.role,
-                    userId: userFind._id,
-                    expires: Date.now()
-                });
-                result = {
-                    token: token
-                };
             }
             catch (err) {
-                result = null;
-                console.log(err);
+                userFind = null;
+                console.debug(err);
             }
-            await this.mongoDB.OpenConnection();
-            return result;
+            await this._mongoDB.CloseConnection();
+            return userFind;
         };
     }
 }

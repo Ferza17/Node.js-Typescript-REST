@@ -7,13 +7,14 @@ const Controller_1 = __importDefault(require("../Controller"));
 const LoginRequest_1 = __importDefault(require("../../Models/Request/LoginRequest"));
 const ResponseUtils_1 = __importDefault(require("../../Utils/Response/ResponseUtils"));
 class UserController extends Controller_1.default {
-    constructor(userService, jwt) {
-        super(userService);
-        this.userService = userService;
-        this.jwt = jwt;
+    constructor(_userService, _jwt) {
+        super(_userService, _jwt);
+        this._userService = _userService;
+        this._jwt = _jwt;
         this.UserLogin = async (req, res) => {
             let result;
             let userLoginData = req.body;
+            let user;
             let validate = LoginRequest_1.default.ValidateLoginRequest(userLoginData);
             if (!validate.isOk) {
                 ResponseUtils_1.default.ResponseJSON(req, res, {
@@ -23,8 +24,8 @@ class UserController extends Controller_1.default {
                 });
                 return;
             }
-            result = await this.userService.UserLogin(userLoginData);
-            if (result == null) {
+            user = await this._userService.UserLogin(userLoginData);
+            if (user == null) {
                 ResponseUtils_1.default.ResponseJSON(req, res, {
                     Code: ResponseUtils_1.default.HttpStatusCode.NotFound,
                     Message: "User Not Found",
@@ -32,6 +33,17 @@ class UserController extends Controller_1.default {
                 });
                 return;
             }
+            const token = this._jwt.CreateToken(user);
+            if (token == null) {
+                ResponseUtils_1.default.ResponseJSON(req, res, {
+                    Code: ResponseUtils_1.default.HttpStatusCode.InternalServerError,
+                    Message: "Error while Creating token",
+                    Data: null
+                });
+            }
+            result = {
+                token: token
+            };
             ResponseUtils_1.default.ResponseJSON(req, res, {
                 Code: ResponseUtils_1.default.HttpStatusCode.Ok,
                 Message: "Success",
@@ -41,7 +53,7 @@ class UserController extends Controller_1.default {
         };
         this.UserProfile = async (req, res) => {
             let result;
-            const identity = this.jwt.GetIdentity(req.header('Authorization'));
+            const identity = this._jwt.GetIdentity(req.header('Authorization'));
             if (identity == null) {
                 ResponseUtils_1.default.ResponseJSON(req, res, {
                     Code: ResponseUtils_1.default.HttpStatusCode.BadRequest,
@@ -50,7 +62,7 @@ class UserController extends Controller_1.default {
                 });
                 return;
             }
-            result = await this.userService.GetUserProfile(identity);
+            result = await this._userService.GetUserProfile(identity);
             if (result == null) {
                 ResponseUtils_1.default.ResponseJSON(req, res, {
                     Code: ResponseUtils_1.default.HttpStatusCode.InternalServerError,

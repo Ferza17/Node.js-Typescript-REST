@@ -1,21 +1,21 @@
 import ProductModel from "../../Models/Product";
 import Services from "../Services";
 import MongoDB from "../../Repositories/MongoDB/MongoDB";
-import JwtMiddleware from "../../Middleware/JWT/JwtMiddleware";
 import Elasticsearch from "../../Repositories/ElasticSearch/Elasticsearch";
 import SearchRequestModel from "../../Models/Request/SearchRequest";
+import TokenIdentity from "../../Models/TokenIdentity";
 
 export default class ProductsService extends Services {
-    constructor(private mongoDB: MongoDB, private es: Elasticsearch, private jwt: JwtMiddleware.Jwt) {
-        super(mongoDB);
+    constructor(private _mongoDB: MongoDB, private _es: Elasticsearch) {
+        super(_mongoDB);
     }
 
     GetProducts = async (): Promise<Array<ProductModel.IProduct> | null> => {
         let products: Array<ProductModel.IProduct> | null
         try {
-            await this.mongoDB.OpenConnection()
+            await this._mongoDB.OpenConnection()
             products = await ProductModel.Product.find({}).exec()
-            await this.mongoDB.CloseConnection()
+            await this._mongoDB.CloseConnection()
         } catch (err) {
             products = null
             console.log(err)
@@ -26,9 +26,9 @@ export default class ProductsService extends Services {
     GetProductsById = async (productId: String): Promise<ProductModel.IProduct | null> => {
         let product: ProductModel.IProduct | null
         try {
-            await this.mongoDB.OpenConnection()
+            await this._mongoDB.OpenConnection()
             product = await ProductModel.Product.findById({_id: productId})
-            await this.mongoDB.CloseConnection()
+            await this._mongoDB.CloseConnection()
         } catch (err) {
             product = null
             console.log(err)
@@ -38,12 +38,12 @@ export default class ProductsService extends Services {
 
     CreateProduct = async (p: ProductModel.IProduct): Promise<ProductModel.IProduct | null> => {
         let product: ProductModel.IProduct | null
-        const conn = this.es.GetConnection()
+        const conn = this._es.GetConnection()
         try {
             // Insert to MongoDB
-            await this.mongoDB.OpenConnection()
+            await this._mongoDB.OpenConnection()
             product = await ProductModel.Product.create(p)
-            await this.mongoDB.CloseConnection()
+            await this._mongoDB.CloseConnection()
 
             // Insert to Elasticsearch
             await conn.index({
@@ -72,9 +72,9 @@ export default class ProductsService extends Services {
     UpdateProduct = async (p: ProductModel.IProduct): Promise<ProductModel.IProduct | null> => {
         let product: ProductModel.IProduct | null
         try {
-            await this.mongoDB.OpenConnection()
+            await this._mongoDB.OpenConnection()
             product = await ProductModel.Product.findOneAndUpdate({_id: p._id}, p).exec()
-            await this.mongoDB.CloseConnection()
+            await this._mongoDB.CloseConnection()
 
         } catch (err) {
             console.log(err)
@@ -83,23 +83,16 @@ export default class ProductsService extends Services {
         return product
     }
 
-    DeleteProduct = async (productId: String, token: String | undefined): Promise<any> => {
+    DeleteProduct = async (productId: String, identity: TokenIdentity): Promise<any> => {
         let product: ProductModel.IProduct | null
-        const identity = this.jwt.GetIdentity(token)
-
-        if (identity == null) {
-            return false
-        }
-
-        // @ts-ignore
         if (identity.role != "Admin") {
             return false
         }
 
         try {
-            await this.mongoDB.OpenConnection()
+            await this._mongoDB.OpenConnection()
             product = await ProductModel.Product.findOneAndDelete({_id: productId})
-            await this.mongoDB.CloseConnection()
+            await this._mongoDB.CloseConnection()
         } catch (err) {
             console.log(err)
             product = null
@@ -109,7 +102,7 @@ export default class ProductsService extends Services {
 
     InsertToElasticSearch = async (): Promise<Boolean> => {
         const products: Array<ProductModel.IProduct> | null = await this.GetProducts()
-        const conn = this.es.GetConnection()
+        const conn = this._es.GetConnection()
         try {
             // Mappings
             await conn.indices.create({
@@ -122,7 +115,6 @@ export default class ProductsService extends Services {
             }, {
                 ignore: [400]
             })
-            //TODO: id in es is not equal with data in MongoDB
             if (products == null) {
                 return false
             }

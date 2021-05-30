@@ -6,13 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Repository_1 = __importDefault(require("../Repository"));
 const env_config_1 = __importDefault(require("../../Utils/Env/env.config"));
 class MongoDB extends Repository_1.default.Repository {
-    constructor(conn) {
+    constructor(_conn) {
         super(Repository_1.default.RepoList.MongoDB);
-        this.conn = conn;
+        this._conn = _conn;
         this.OpenConnection = async () => {
             try {
                 // @ts-ignore
-                await this.conn.connect(env_config_1.default.MONGODB_URL, {
+                await this._conn.connect(env_config_1.default.MONGODB_URL, {
                     useCreateIndex: true,
                     useFindAndModify: false,
                     useUnifiedTopology: true,
@@ -25,7 +25,7 @@ class MongoDB extends Repository_1.default.Repository {
         };
         this.CloseConnection = async () => {
             try {
-                await this.conn.disconnect();
+                await this._conn.disconnect();
             }
             catch (err) {
                 throw new Error(err);
@@ -34,7 +34,7 @@ class MongoDB extends Repository_1.default.Repository {
         this.TestConnection = async () => {
             let connection;
             try {
-                connection = this.conn.version;
+                connection = this._conn.version;
             }
             catch (err) {
                 throw new Error(err);

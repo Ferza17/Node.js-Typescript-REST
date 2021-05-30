@@ -2,6 +2,8 @@ import {decode, encode} from "jwt-simple"
 import {NextFunction, Request, Response} from "express"
 import env from "../../Utils/Env/env.config"
 import ResponseUtil from "../../Utils/Response/ResponseUtils";
+import TokenIdentity from "../../Models/TokenIdentity";
+import UserModel from "../../Models/User";
 
 const messageError = {
     UNAUTHORIZED_USER: "you're not allowed!.",
@@ -9,14 +11,11 @@ const messageError = {
     INVALID_TOKEN: "Token isn't Valid!"
 }
 namespace JwtMiddleware {
-    export interface ITokenIdentity {
-        userId: String,
-        role: String,
-        expires: Number
-    }
+
     export class Jwt {
         JwtRequired = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
             const token = req.header("Authorization")
+            // Check Token from Header
             if (!token || token == "" || token == null) {
                 ResponseUtil.ResponseJSON(req, res, {
                     Code: ResponseUtil.HttpStatusCode.Unauthorized,
@@ -27,7 +26,8 @@ namespace JwtMiddleware {
             }
 
             try {
-                const decodeToken: ITokenIdentity | null = this.GetIdentity(token)
+                // Decoding token
+                const decodeToken: TokenIdentity | null = this.GetIdentity(token)
                 if (decodeToken == null) {
                     ResponseUtil.ResponseJSON(req, res, {
                         Code: ResponseUtil.HttpStatusCode.Unauthorized,
@@ -36,7 +36,9 @@ namespace JwtMiddleware {
                     })
                     return
                 }
-                const expirationToken: Boolean = this.checkExpiration(decodeToken)
+
+                // Check expiration time
+                const expirationToken: Boolean = this._checkExpiration(decodeToken)
                 if (!expirationToken) {
                     ResponseUtil.ResponseJSON(req, res, {
                         Code: ResponseUtil.HttpStatusCode.Unauthorized,
@@ -46,46 +48,53 @@ namespace JwtMiddleware {
                     return
                 }
 
-                // const userRole: Boolean = this.checkRole(decodeToken)
-                // if (!userRole) {
-                //     ResponseJSON(req, res, {
-                //         Code: HttpStatusCode.Unauthorized,
-                //         Message: messageError.UNAUTHORIZED_USER,
-                //         Data: null
-                //     })
-                //     return
-                // }
+                // Check Role that have access to the api
+                const userRole: Boolean = this._checkRole(decodeToken)
+                if (!userRole) {
+                    ResponseUtil.ResponseJSON(req, res, {
+                        Code: ResponseUtil.HttpStatusCode.Unauthorized,
+                        Message: messageError.UNAUTHORIZED_USER,
+                        Data: null
+                    })
+                    return
+                }
             } catch (err) {
                 ResponseUtil.ResponseJSON(req, res, {
                     Code: ResponseUtil.HttpStatusCode.BadRequest,
                     Message: messageError.INVALID_TOKEN,
                     Data: null
                 })
-                throw new Error(err)
+                console.debug(err)
+                return
             }
 
 
             next();
         }
 
-        CreateToken = (identity: ITokenIdentity): String => {
-            let tokenHash: String
+        CreateToken = (user: UserModel.IUser): String | null => {
+            let tokenHash: String | null
             const fifteenMinutes = env.JWT_EXPIRATION_TIMES * 60 * 1000
 
-            identity.expires = Date.now() + fifteenMinutes
+            const identity: TokenIdentity = {
+                userId: user._id,
+                role: user.role,
+                expires: Date.now() + fifteenMinutes
+            }
 
             try {
                 // @ts-ignore
                 tokenHash = encode(identity, env.JWT_SECRET_KEY, env.JWT_ALGORITHM,).toString()
             } catch (err) {
-                throw new Error(err)
+                console.debug(err)
+                tokenHash = null
             }
 
             return tokenHash
         }
 
-        GetIdentity = (token: String | null | undefined): ITokenIdentity | null => {
-            let identity: ITokenIdentity | null
+        GetIdentity = (token: String | null | undefined): TokenIdentity | null => {
+            let identity: TokenIdentity | null
             try {
                 if (token == null) {
                     return null
@@ -100,15 +109,15 @@ namespace JwtMiddleware {
             return identity
         }
 
-        checkExpiration = (token: ITokenIdentity | null): Boolean => {
+        private _checkExpiration = (token: TokenIdentity | null): Boolean => {
             const now: Number = Date.now()
 
             // @ts-ignore
             return token.expires > now;
         }
 
-        CheckRole = (token: ITokenIdentity): Boolean => {
-            return token.role == "Admin"
+        private _checkRole = (token: TokenIdentity): Boolean => {
+            return token.role == env.USER_ROLE
         }
 
         RefreshToken = (req: Request, res: Response) => {

@@ -4,17 +4,17 @@ import UserController from "../../Controllers/UserController/UserController";
 import express from "express";
 
 class UserRoutes extends Routes.Route {
-    constructor(app: express.Application, private jwt: JwtMiddleware.Jwt, private ctrl: UserController) {
-        super(app, Routes.RoutesList.User);
+    constructor(private _app: express.Application, private _jwt: JwtMiddleware.Jwt, private _ctrl: UserController) {
+        super(_app, Routes.RoutesList.User, _jwt, _ctrl);
     }
 
     initRoutes(): express.Application {
-        let app: express.Application = this.app
+        let app: express.Application = this._app
         app.routes = [
             app.route(`${Routes.RoutesList.User}/login`)
-                .post(this.ctrl.UserLogin),
+                .post(this._ctrl.UserLogin),
             app.route(`${Routes.RoutesList.User}/profile`)
-                .get(this.jwt.JwtRequired, this.ctrl.UserProfile),
+                .get(this._jwt.JwtRequired, this._ctrl.UserProfile),
         ]
         return app
     }

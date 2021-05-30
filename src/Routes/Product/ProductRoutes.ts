@@ -3,24 +3,26 @@ import express from "express"
 import JwtMiddleware from "../../Middleware/JWT/JwtMiddleware";
 import Routes from "../Routes";
 
-
 class ProductRoutes extends Routes.Route {
-    constructor(app: express.Application, private jwt: JwtMiddleware.Jwt, private productCtrl: ProductController) {
-        super(app, Routes.RoutesList.Product);
+    constructor(private _app: express.Application, private _jwt: JwtMiddleware.Jwt, private _productCtrl: ProductController) {
+        super(_app, Routes.RoutesList.Product, _jwt, _productCtrl);
     }
 
     initRoutes(): express.Application {
-        this.app.routes = [
-            this.app.route(Routes.RoutesList.Product)
-                .get(this.jwt.JwtRequired, this.productCtrl.GetProducts)
-                .post(this.jwt.JwtRequired, this.productCtrl.CreateProduct),
-            this.app.route(Routes.RoutesList.Product + "/:id")
-                .get(this.jwt.JwtRequired, this.productCtrl.GetProductsById)
-                .put(this.jwt.JwtRequired, this.productCtrl.UpdateProduct)
-                .delete(this.jwt.JwtRequired, this.productCtrl.DeleteProducts)
+        let app: express.Application = this._app
+
+        this._app.routes = [
+            app.route(Routes.RoutesList.Product)
+                .get(this._jwt.JwtRequired, this._productCtrl.GetProducts)
+                .post(this._jwt.JwtRequired, this._productCtrl.CreateProduct),
+            app.route(`${Routes.RoutesList.Product}/:id`)
+                .get(this._jwt.JwtRequired, this._productCtrl.GetProductsById)
+                .put(this._jwt.JwtRequired, this._productCtrl.UpdateProduct)
+                .delete(this._jwt.JwtRequired, this._productCtrl.DeleteProducts)
         ]
-        return this.app;
+        return app;
     }
 }
+
 
 export default ProductRoutes

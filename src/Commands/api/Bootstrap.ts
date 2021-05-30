@@ -15,7 +15,6 @@ import MongoDB from "../../Repositories/MongoDB/MongoDB";
 import Elasticsearch from "../../Repositories/ElasticSearch/Elasticsearch";
 import ResponseUtil from "../../Utils/Response/ResponseUtils";
 import Env from "../../Utils/Env/env.config";
-import express from "express";
 
 
 const Bootstrap = (app: Express.Application): void => {
@@ -37,13 +36,13 @@ const Bootstrap = (app: Express.Application): void => {
     Repos.push(elasticSearchRepository)
 
     //Products Initialize
-    const productService = new ProductsService(mongoDBRepository, elasticSearchRepository, jwtMiddleware)
-    const productController = new ProductController(productService)
+    const productService = new ProductsService(mongoDBRepository, elasticSearchRepository)
+    const productController = new ProductController(productService, jwtMiddleware)
     const productRoutes = new ProductRoutes(app, jwtMiddleware, productController)
     Routes.push(productRoutes)
 
     //Users Initialize
-    const userService = new UsersServices(mongoDBRepository, jwtMiddleware)
+    const userService = new UsersServices(mongoDBRepository)
     const userController = new UserController(userService, jwtMiddleware)
     const userRoutes = new UserRoutes(app, jwtMiddleware, userController)
     Routes.push(userRoutes)
@@ -74,8 +73,8 @@ const Bootstrap = (app: Express.Application): void => {
     })
 
     // Url Not Found Route
-    app.use((req: express.Request, res: express.Response) => {
-        ResponseUtil.ResponseJSON(req,res ,{
+    app.use((req: Express.Request, res: Express.Response) => {
+        ResponseUtil.ResponseJSON(req, res, {
             Code: ResponseUtil.HttpStatusCode.NotFound,
             Message: "Not Found!",
             Data: null

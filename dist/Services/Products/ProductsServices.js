@@ -6,17 +6,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Product_1 = __importDefault(require("../../Models/Product"));
 const Services_1 = __importDefault(require("../Services"));
 class ProductsService extends Services_1.default {
-    constructor(mongoDB, es, jwt) {
-        super(mongoDB);
-        this.mongoDB = mongoDB;
-        this.es = es;
-        this.jwt = jwt;
+    constructor(_mongoDB, _es) {
+        super(_mongoDB);
+        this._mongoDB = _mongoDB;
+        this._es = _es;
         this.GetProducts = async () => {
             let products;
             try {
-                await this.mongoDB.OpenConnection();
+                await this._mongoDB.OpenConnection();
                 products = await Product_1.default.Product.find({}).exec();
-                await this.mongoDB.CloseConnection();
+                await this._mongoDB.CloseConnection();
             }
             catch (err) {
                 products = null;
@@ -27,9 +26,9 @@ class ProductsService extends Services_1.default {
         this.GetProductsById = async (productId) => {
             let product;
             try {
-                await this.mongoDB.OpenConnection();
+                await this._mongoDB.OpenConnection();
                 product = await Product_1.default.Product.findById({ _id: productId });
-                await this.mongoDB.CloseConnection();
+                await this._mongoDB.CloseConnection();
             }
             catch (err) {
                 product = null;
@@ -39,12 +38,12 @@ class ProductsService extends Services_1.default {
         };
         this.CreateProduct = async (p) => {
             let product;
-            const conn = this.es.GetConnection();
+            const conn = this._es.GetConnection();
             try {
                 // Insert to MongoDB
-                await this.mongoDB.OpenConnection();
+                await this._mongoDB.OpenConnection();
                 product = await Product_1.default.Product.create(p);
-                await this.mongoDB.CloseConnection();
+                await this._mongoDB.CloseConnection();
                 // Insert to Elasticsearch
                 await conn.index({
                     index: "products",
@@ -71,9 +70,9 @@ class ProductsService extends Services_1.default {
         this.UpdateProduct = async (p) => {
             let product;
             try {
-                await this.mongoDB.OpenConnection();
+                await this._mongoDB.OpenConnection();
                 product = await Product_1.default.Product.findOneAndUpdate({ _id: p._id }, p).exec();
-                await this.mongoDB.CloseConnection();
+                await this._mongoDB.CloseConnection();
             }
             catch (err) {
                 console.log(err);
@@ -81,20 +80,15 @@ class ProductsService extends Services_1.default {
             }
             return product;
         };
-        this.DeleteProduct = async (productId, token) => {
+        this.DeleteProduct = async (productId, identity) => {
             let product;
-            const identity = this.jwt.GetIdentity(token);
-            if (identity == null) {
-                return false;
-            }
-            // @ts-ignore
             if (identity.role != "Admin") {
                 return false;
             }
             try {
-                await this.mongoDB.OpenConnection();
+                await this._mongoDB.OpenConnection();
                 product = await Product_1.default.Product.findOneAndDelete({ _id: productId });
-                await this.mongoDB.CloseConnection();
+                await this._mongoDB.CloseConnection();
             }
             catch (err) {
                 console.log(err);
@@ -104,7 +98,7 @@ class ProductsService extends Services_1.default {
         };
         this.InsertToElasticSearch = async () => {
             const products = await this.GetProducts();
-            const conn = this.es.GetConnection();
+            const conn = this._es.GetConnection();
             try {
                 // Mappings
                 await conn.indices.create({
@@ -117,7 +111,6 @@ class ProductsService extends Services_1.default {
                 }, {
                     ignore: [400]
                 });
-                //TODO: id in es is not equal with data in MongoDB
                 if (products == null) {
                     return false;
                 }

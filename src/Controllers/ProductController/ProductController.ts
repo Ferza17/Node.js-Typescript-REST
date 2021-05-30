@@ -3,10 +3,11 @@ import ResponseUtil from "../../Utils/Response/ResponseUtils"
 import Controller from "../Controller";
 import ProductServices from "../../Services/Products/ProductsServices";
 import ProductModel from "../../Models/Product"
+import JwtMiddleware from "../../Middleware/JWT/JwtMiddleware";
 
 export default class ProductController extends Controller {
-    constructor(private productService: ProductServices) {
-        super(productService);
+    constructor(private _productService: ProductServices, private _jwt: JwtMiddleware.Jwt) {
+        super( _productService, _jwt);
     }
 
     CreateProduct = async (req: Express.Request, res: Express.Response): Promise<void> => {
@@ -22,7 +23,7 @@ export default class ProductController extends Controller {
             return
         }
 
-        const ProductCreated = await this.productService.CreateProduct(product)
+        const ProductCreated = await this._productService.CreateProduct(product)
         if (ProductCreated == null) {
             ResponseUtil.ResponseJSON(req, res, {
                 Code: ResponseUtil.HttpStatusCode.NotFound,
@@ -40,7 +41,7 @@ export default class ProductController extends Controller {
     }
 
     GetProducts = async (req: Express.Request, res: Express.Response): Promise<void> => {
-        const products = await this.productService.GetProducts()
+        const products = await this._productService.GetProducts()
         if (products == null) {
             ResponseUtil.ResponseJSON(req, res, {
                 Code: 404,
@@ -60,7 +61,7 @@ export default class ProductController extends Controller {
     GetProductsById = async (req: Express.Request, res: Express.Response): Promise<void> => {
         const productId: String = req.params.id
 
-        const result = await this.productService.GetProductsById(productId)
+        const result = await this._productService.GetProductsById(productId)
         if (result == null) {
             ResponseUtil.ResponseJSON(req, res, {
                 Code: ResponseUtil.HttpStatusCode.NotFound,
@@ -93,7 +94,7 @@ export default class ProductController extends Controller {
         }
 
         product._id = productId
-        const data = await this.productService.UpdateProduct(product)
+        const data = await this._productService.UpdateProduct(product)
         if (data == null) {
             ResponseUtil.ResponseJSON(req, res, {
                 Code: ResponseUtil.HttpStatusCode.InternalServerError,
@@ -113,7 +114,19 @@ export default class ProductController extends Controller {
     DeleteProducts = async (req: Express.Request, res: Express.Response): Promise<void> => {
         const token: string | undefined = req.header("Authorization")
         const productId: String = req.params.id
-        const deletedProduct = this.productService.DeleteProduct(productId, token)
+
+        const identity = this._jwt.GetIdentity(token)
+
+        if (identity == null) {
+            ResponseUtil.ResponseJSON(req, res, {
+                Code: ResponseUtil.HttpStatusCode.Unauthorized,
+                Message: "Unauthorized user!",
+                Data: null
+            })
+            return
+        }
+
+        const deletedProduct = this._productService.DeleteProduct(productId, identity)
         if (deletedProduct == null) {
             ResponseUtil.ResponseJSON(req, res, {
                 Code: ResponseUtil.HttpStatusCode.BadRequest,

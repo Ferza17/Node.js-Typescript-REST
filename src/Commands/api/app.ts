@@ -3,7 +3,6 @@ import express from 'express';
 import env from "../../Utils/Env/env.config"
 import Bootstrap from "./Bootstrap";
 
-
 const app: express.Application = express()
 const server: http.Server = http.createServer(app)
 

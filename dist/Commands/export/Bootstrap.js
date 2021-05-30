@@ -24,6 +24,6 @@ const Bootstrap = () => {
     /**.
      * ======== End Bootstrapping ===========
      */
-    return new ProductsServices_1.default(mongoDBRepository, elasticSearchRepository, jwtMiddleware);
+    return new ProductsServices_1.default(mongoDBRepository, elasticSearchRepository);
 };
 exports.default = Bootstrap;

@@ -1,5 +1,3 @@
-interface ILoginResponse {
-    token: String
+export default interface ILoginResponse {
+    token: String | null
 }
-
-export default ILoginResponse

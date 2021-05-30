@@ -4,6 +4,8 @@ dotenv.config()
 
 export default {
     APP_PORT: process.env.PORT,
+    VERSION_API: process.env.VERSION,
+    USER_ROLE: process.env.USER_ROLE,
     JWT_SECRET_KEY: process.env.JWT_SECRET_KEY,
     ELASTIC_URL: process.env.ELASTIC_URL_NODE1,
     MONGODB_URL: process.env.MONGODB_URL,

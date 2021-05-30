@@ -17,6 +17,7 @@ var JwtMiddleware;
         constructor() {
             this.JwtRequired = async (req, res, next) => {
                 const token = req.header("Authorization");
+                // Check Token from Header
                 if (!token || token == "" || token == null) {
                     ResponseUtils_1.default.ResponseJSON(req, res, {
                         Code: ResponseUtils_1.default.HttpStatusCode.Unauthorized,
@@ -26,6 +27,7 @@ var JwtMiddleware;
                     return;
                 }
                 try {
+                    // Decoding token
                     const decodeToken = this.GetIdentity(token);
                     if (decodeToken == null) {
                         ResponseUtils_1.default.ResponseJSON(req, res, {
@@ -35,7 +37,8 @@ var JwtMiddleware;
                         });
                         return;
                     }
-                    const expirationToken = this.checkExpiration(decodeToken);
+                    // Check expiration time
+                    const expirationToken = this._checkExpiration(decodeToken);
                     if (!expirationToken) {
                         ResponseUtils_1.default.ResponseJSON(req, res, {
                             Code: ResponseUtils_1.default.HttpStatusCode.Unauthorized,
@@ -44,15 +47,16 @@ var JwtMiddleware;
                         });
                         return;
                     }
-                    // const userRole: Boolean = this.checkRole(decodeToken)
-                    // if (!userRole) {
-                    //     ResponseJSON(req, res, {
-                    //         Code: HttpStatusCode.Unauthorized,
-                    //         Message: messageError.UNAUTHORIZED_USER,
-                    //         Data: null
-                    //     })
-                    //     return
-                    // }
+                    // Check Role that have access to the api
+                    const userRole = this._checkRole(decodeToken);
+                    if (!userRole) {
+                        ResponseUtils_1.default.ResponseJSON(req, res, {
+                            Code: ResponseUtils_1.default.HttpStatusCode.Unauthorized,
+                            Message: messageError.UNAUTHORIZED_USER,
+                            Data: null
+                        });
+                        return;
+                    }
                 }
                 catch (err) {
                     ResponseUtils_1.default.ResponseJSON(req, res, {
@@ -60,20 +64,26 @@ var JwtMiddleware;
                         Message: messageError.INVALID_TOKEN,
                         Data: null
                     });
-                    throw new Error(err);
+                    console.debug(err);
+                    return;
                 }
                 next();
             };
-            this.CreateToken = (identity) => {
+            this.CreateToken = (user) => {
                 let tokenHash;
                 const fifteenMinutes = env_config_1.default.JWT_EXPIRATION_TIMES * 60 * 1000;
-                identity.expires = Date.now() + fifteenMinutes;
+                const identity = {
+                    userId: user._id,
+                    role: user.role,
+                    expires: Date.now() + fifteenMinutes
+                };
                 try {
                     // @ts-ignore
                     tokenHash = jwt_simple_1.encode(identity, env_config_1.default.JWT_SECRET_KEY, env_config_1.default.JWT_ALGORITHM).toString();
                 }
                 catch (err) {
-                    throw new Error(err);
+                    console.debug(err);
+                    tokenHash = null;
                 }
                 return tokenHash;
             };
@@ -92,13 +102,13 @@ var JwtMiddleware;
                 }
                 return identity;
             };
-            this.checkExpiration = (token) => {
+            this._checkExpiration = (token) => {
                 const now = Date.now();
                 // @ts-ignore
                 return token.expires > now;
             };
-            this.CheckRole = (token) => {
-                return token.role == "Admin";
+            this._checkRole = (token) => {
+                return token.role == env_config_1.default.USER_ROLE;
             };
             this.RefreshToken = (req, res) => {
                 //TODO Create Refresh token when token is in 30 minute

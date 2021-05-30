@@ -3,14 +3,14 @@ import env from "../../Utils/Env/env.config"
 import mongoose from "mongoose"
 
 export default class MongoDB extends Repositories.Repository {
-    constructor(private conn: mongoose.Mongoose) {
+    constructor(private _conn: mongoose.Mongoose) {
         super(Repositories.RepoList.MongoDB);
     }
 
     OpenConnection = async () => {
         try {
             // @ts-ignore
-            await this.conn.connect(env.MONGODB_URL, {
+            await this._conn.connect(env.MONGODB_URL, {
                 useCreateIndex: true,
                 useFindAndModify: false,
                 useUnifiedTopology: true,
@@ -23,7 +23,7 @@ export default class MongoDB extends Repositories.Repository {
 
     CloseConnection = async () => {
         try {
-            await this.conn.disconnect()
+            await this._conn.disconnect()
         } catch (err) {
             throw new Error(err)
         }
@@ -32,7 +32,7 @@ export default class MongoDB extends Repositories.Repository {
     TestConnection = async (): Promise<any> => {
         let connection: any
         try {
-            connection = this.conn.version
+            connection = this._conn.version
         } catch (err) {
             throw new Error(err)
         }

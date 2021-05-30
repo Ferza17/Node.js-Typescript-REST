@@ -1,23 +1,22 @@
 import Services from "../Services";
 import MongoDB from "../../Repositories/MongoDB/MongoDB";
 import UserModel from "../../Models/User";
-import LoginResponse from "../../Models/Response/LoginResponse";
 import LoginRequestModel from "../../Models/Request/LoginRequest";
-import ILoginResponse from "../../Models/Response/LoginResponse";
-import JwtMiddleware from "../../Middleware/JWT/JwtMiddleware"
 import IProfileResponse from "../../Models/Response/ProfileResponse";
+import IUser = UserModel.IUser;
+import TokenIdentity from "../../Models/TokenIdentity";
 
 export default class UsersServices extends Services {
-    constructor(private mongoDB: MongoDB, private jwt: JwtMiddleware.Jwt) {
-        super(mongoDB);
+    constructor(private _mongoDB: MongoDB) {
+        super(_mongoDB);
     }
 
-    GetUserProfile = async (identity: JwtMiddleware.ITokenIdentity): Promise<IProfileResponse | null> => {
+    GetUserProfile = async (identity: TokenIdentity): Promise<IProfileResponse | null> => {
         let result: IProfileResponse | null
         let userFind: UserModel.IUser
 
         try {
-            await this.mongoDB.OpenConnection()
+            await this._mongoDB.OpenConnection()
             // @ts-ignore
             userFind = await UserModel.User.findOne({_id: identity.userId})
             if (userFind == null) {
@@ -34,40 +33,29 @@ export default class UsersServices extends Services {
                 password: userFind.password
             }
         } catch (err) {
-            console.log(err)
+            console.debug(err)
             result = null
         }
-        await this.mongoDB.CloseConnection()
+        await this._mongoDB.CloseConnection()
         return result
     }
 
-    UserLogin = async (user: LoginRequestModel.ILoginRequest): Promise<ILoginResponse | null> => {
-        let result: LoginResponse | null
-        let userFind: UserModel.IUser
+    UserLogin = async (user: LoginRequestModel.ILoginRequest): Promise<IUser | null> => {
+        let userFind: UserModel.IUser | null
 
         try {
-            await this.mongoDB.OpenConnection()
+            await this._mongoDB.OpenConnection()
             // @ts-ignore
             userFind = await UserModel.User.findOne({email: user.email, password: user.password})
             if (userFind == null) {
-                result = null
-            }
-
-            const token = this.jwt.CreateToken({
-                role: userFind.role,
-                userId: userFind._id,
-                expires: Date.now()
-            })
-
-            result = {
-                token: token
+                userFind = null
             }
         } catch (err) {
-            result = null
-            console.log(err)
+            userFind = null
+            console.debug(err)
         }
-        await this.mongoDB.OpenConnection()
-        return result
+        await this._mongoDB.CloseConnection()
+        return userFind
     }
 
     // CreateUser = async (): Promise<IUser> => {

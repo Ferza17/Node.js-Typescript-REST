@@ -24,7 +24,7 @@ const Bootstrap = (): ProductsService => {
      * ======== End Bootstrapping ===========
      */
 
-    return new ProductsService(mongoDBRepository, elasticSearchRepository, jwtMiddleware)
+    return new ProductsService(mongoDBRepository, elasticSearchRepository)
 }
 
 
