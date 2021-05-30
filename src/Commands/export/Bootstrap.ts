@@ -1,9 +1,9 @@
 import JwtMiddleware from "../../Middleware/JWT/JwtMiddleware";
-import MongoDB from "../../Repository/MongoDB/MongoDB";
+import MongoDB from "../../Repositories/MongoDB/MongoDB";
 import mongoose from "mongoose";
 import ProductsService from "../../Services/Products/ProductsServices";
 import {Client} from "@elastic/elasticsearch";
-import Elasticsearch from "../../Repository/ElasticSearch/Elasticsearch";
+import Elasticsearch from "../../Repositories/ElasticSearch/Elasticsearch";
 import Env from "../../Utils/Env/env.config"
 
 

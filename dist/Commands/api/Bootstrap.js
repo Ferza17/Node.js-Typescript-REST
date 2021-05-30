@@ -3,22 +3,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const body_parser_1 = require("body-parser");
-const JwtMiddleware_1 = __importDefault(require("../../Middleware/JWT/JwtMiddleware"));
-const MongoDB_1 = __importDefault(require("../../Repository/MongoDB/MongoDB"));
 const mongoose_1 = __importDefault(require("mongoose"));
-const ProductsServices_1 = __importDefault(require("../../Services/Products/ProductsServices"));
-const ProductController_1 = __importDefault(require("../../Controllers/ProductController/ProductController"));
-const ProductRoutes_1 = __importDefault(require("../../Routes/Product/ProductRoutes"));
-const UsersServices_1 = __importDefault(require("../../Services/Users/UsersServices"));
-const UserController_1 = __importDefault(require("../../Controllers/UserController/UserController"));
-const UserRoutes_1 = __importDefault(require("../../Routes/User/UserRoutes"));
+const body_parser_1 = require("body-parser");
 const elasticsearch_1 = require("@elastic/elasticsearch");
+const JwtMiddleware_1 = __importDefault(require("../../Middleware/JWT/JwtMiddleware"));
+const ProductRoutes_1 = __importDefault(require("../../Routes/Product/ProductRoutes"));
+const UserRoutes_1 = __importDefault(require("../../Routes/User/UserRoutes"));
+const ProductController_1 = __importDefault(require("../../Controllers/ProductController/ProductController"));
+const UserController_1 = __importDefault(require("../../Controllers/UserController/UserController"));
+const ProductsServices_1 = __importDefault(require("../../Services/Products/ProductsServices"));
+const UsersServices_1 = __importDefault(require("../../Services/Users/UsersServices"));
+const MongoDB_1 = __importDefault(require("../../Repositories/MongoDB/MongoDB"));
+const Elasticsearch_1 = __importDefault(require("../../Repositories/ElasticSearch/Elasticsearch"));
+const ResponseUtils_1 = __importDefault(require("../../Utils/Response/ResponseUtils"));
 const env_config_1 = __importDefault(require("../../Utils/Env/env.config"));
-const Elasticsearch_1 = __importDefault(require("../../Repository/ElasticSearch/Elasticsearch"));
 const Bootstrap = (app) => {
     app.use(body_parser_1.json());
     let Routes = [];
+    let Repos = [];
     const client = new elasticsearch_1.Client({
         node: env_config_1.default.ELASTIC_URL
     });
@@ -26,19 +28,11 @@ const Bootstrap = (app) => {
      * ======== Bootstrapping ===========
      */
     const jwtMiddleware = new JwtMiddleware_1.default.Jwt();
-    //Repository
+    //Repositories
     const mongoDBRepository = new MongoDB_1.default(mongoose_1.default);
+    Repos.push(mongoDBRepository);
     const elasticSearchRepository = new Elasticsearch_1.default(client);
-    // mongoDBRepository.TestConnection().then(res => {
-    //     console.log("MongoDB >> ", res)
-    // }).catch(err => {
-    //     console.log(err)
-    // })
-    // elasticSearchRepository.TestConnection().then(res => {
-    //     console.log("Elasticsearch >> ", res)
-    // }).catch(err => {
-    //     console.log(err)
-    // })
+    Repos.push(elasticSearchRepository);
     //Products Initialize
     const productService = new ProductsServices_1.default(mongoDBRepository, elasticSearchRepository, jwtMiddleware);
     const productController = new ProductController_1.default(productService);
@@ -52,6 +46,24 @@ const Bootstrap = (app) => {
     /**.
      * ======== End Bootstrapping ===========
      */
-    return Routes;
+    // List Repository
+    console.log("=============== Repository ===============");
+    Repos.forEach(repo => {
+        console.log("Repository : ", repo.GetRepoName());
+    });
+    // Initialize All Routes
+    console.log("=============== Routes ===================");
+    Routes.forEach(route => {
+        console.log("Route : ", route.GetRoute());
+        route.initRoutes();
+    });
+    app.use("/ping", (req, res) => {
+        ResponseUtils_1.default.ResponseJSON(req, res, {
+            Code: 200,
+            Message: "Pong",
+            Data: null
+        });
+        return;
+    });
 };
 exports.default = Bootstrap;

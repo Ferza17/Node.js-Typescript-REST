@@ -1,23 +1,26 @@
-import express from "express";
-import {json} from "body-parser";
-import JwtMiddleware from "../../Middleware/JWT/JwtMiddleware";
-import MongoDB from "../../Repository/MongoDB/MongoDB";
+import Express from "express";
 import mongoose from "mongoose";
-import ProductsService from "../../Services/Products/ProductsServices";
-import ProductController from "../../Controllers/ProductController/ProductController";
-import ProductRoutes from "../../Routes/Product/ProductRoutes";
-import UsersServices from "../../Services/Users/UsersServices";
-import UserController from "../../Controllers/UserController/UserController";
-import UserRoutes from "../../Routes/User/UserRoutes";
-import Routes from "../../Routes/Routes";
+import {json} from "body-parser";
 import {Client} from "@elastic/elasticsearch";
+import JwtMiddleware from "../../Middleware/JWT/JwtMiddleware"
+import Routes from "../../Routes/Routes";
+import ProductRoutes from "../../Routes/Product/ProductRoutes";
+import UserRoutes from "../../Routes/User/UserRoutes";
+import ProductController from "../../Controllers/ProductController/ProductController";
+import UserController from "../../Controllers/UserController/UserController";
+import ProductsService from "../../Services/Products/ProductsServices";
+import UsersServices from "../../Services/Users/UsersServices";
+import Repositories from "../../Repositories/Repository";
+import MongoDB from "../../Repositories/MongoDB/MongoDB";
+import Elasticsearch from "../../Repositories/ElasticSearch/Elasticsearch";
+import ResponseUtil from "../../Utils/Response/ResponseUtils";
 import Env from "../../Utils/Env/env.config";
-import Elasticsearch from "../../Repository/ElasticSearch/Elasticsearch";
 
 
-const Bootstrap = (app: express.Application): Array<Routes.Route> => {
+const Bootstrap = (app: Express.Application): void => {
     app.use(json())
     let Routes: Array<Routes.Route> = []
+    let Repos: Array<Repositories.Repository> = []
     const client = new Client({
         node: Env.ELASTIC_URL
     })
@@ -26,20 +29,11 @@ const Bootstrap = (app: express.Application): Array<Routes.Route> => {
      */
     const jwtMiddleware = new JwtMiddleware.Jwt()
 
-    //Repository
+    //Repositories
     const mongoDBRepository = new MongoDB(mongoose)
+    Repos.push(mongoDBRepository)
     const elasticSearchRepository = new Elasticsearch(client)
-
-    // mongoDBRepository.TestConnection().then(res => {
-    //     console.log("MongoDB >> ", res)
-    // }).catch(err => {
-    //     console.log(err)
-    // })
-    // elasticSearchRepository.TestConnection().then(res => {
-    //     console.log("Elasticsearch >> ", res)
-    // }).catch(err => {
-    //     console.log(err)
-    // })
+    Repos.push(elasticSearchRepository)
 
     //Products Initialize
     const productService = new ProductsService(mongoDBRepository, elasticSearchRepository, jwtMiddleware)
@@ -56,7 +50,26 @@ const Bootstrap = (app: express.Application): Array<Routes.Route> => {
      * ======== End Bootstrapping ===========
      */
 
-    return Routes
+    // List Repository
+    console.log("=============== Repository ===============")
+    Repos.forEach(repo => {
+        console.log("Repository : ", repo.GetRepoName())
+    })
+
+    // Initialize All Routes
+    console.log("=============== Routes ===================")
+    Routes.forEach(route => {
+        console.log("Route : ", route.GetRoute())
+        route.initRoutes()
+    })
+    app.use("/ping", (req: Express.Request, res: Express.Response) => {
+        ResponseUtil.ResponseJSON(req, res, {
+            Code: 200,
+            Message: "Pong",
+            Data: null
+        })
+        return
+    })
 }
 
 

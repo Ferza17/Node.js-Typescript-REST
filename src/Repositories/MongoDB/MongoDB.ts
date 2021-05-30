@@ -1,10 +1,10 @@
-import {RepoList, Repository} from "../Repository";
+import Repositories from "../Repository";
 import env from "../../Utils/Env/env.config"
 import mongoose from "mongoose"
 
-export default class MongoDB extends Repository {
+export default class MongoDB extends Repositories.Repository {
     constructor(private conn: mongoose.Mongoose) {
-        super(RepoList.MongoDB);
+        super(Repositories.RepoList.MongoDB);
     }
 
     OpenConnection = async () => {

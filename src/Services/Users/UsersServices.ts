@@ -1,5 +1,5 @@
 import Services from "../Services";
-import MongoDB from "../../Repository/MongoDB/MongoDB";
+import MongoDB from "../../Repositories/MongoDB/MongoDB";
 import UserModel from "../../Models/User";
 import LoginResponse from "../../Models/Response/LoginResponse";
 import LoginRequestModel from "../../Models/Request/LoginRequest";

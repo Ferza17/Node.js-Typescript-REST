@@ -1,14 +1,15 @@
-import {RepoList, Repository} from "../Repository";
+import Repositories from "../Repository";
 import {Client} from "@elastic/elasticsearch"
 
-export default class Elasticsearch extends Repository {
+export default class Elasticsearch extends Repositories.Repository {
     constructor(private conn: Client) {
-        super(RepoList.ElasticSearch);
+        super(Repositories.RepoList.ElasticSearch);
     }
 
     GetConnection = (): Client => {
         return this.conn
     }
+
 
     TestConnection = async (): Promise<any> => {
         let connection: any

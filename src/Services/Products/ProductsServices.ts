@@ -1,8 +1,8 @@
 import ProductModel from "../../Models/Product";
 import Services from "../Services";
-import MongoDB from "../../Repository/MongoDB/MongoDB";
+import MongoDB from "../../Repositories/MongoDB/MongoDB";
 import JwtMiddleware from "../../Middleware/JWT/JwtMiddleware";
-import Elasticsearch from "../../Repository/ElasticSearch/Elasticsearch";
+import Elasticsearch from "../../Repositories/ElasticSearch/Elasticsearch";
 import SearchRequestModel from "../../Models/Request/SearchRequest";
 
 export default class ProductsService extends Services {
