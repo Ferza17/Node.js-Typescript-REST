@@ -49,12 +49,12 @@ const Bootstrap = (app) => {
     // List Repository
     console.log("=============== Repository ===============");
     Repos.forEach(repo => {
-        console.log("Repository : ", repo.GetRepoName());
+        console.debug("Repository : ", repo.GetRepoName());
     });
     // Initialize All Routes
     console.log("=============== Routes ===================");
     Routes.forEach(route => {
-        console.log("Route : ", route.GetRoute());
+        console.debug("Route : ", route.GetRoute());
         route.initRoutes();
     });
     app.use("/ping", (req, res) => {
