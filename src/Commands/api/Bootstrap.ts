@@ -1,30 +1,30 @@
 import express from "express";
 import {json} from "body-parser";
-import {JwtMiddleware} from "../../Middleware/JWT/JwtMiddleware";
-import {MongoDB} from "../../Repository/MongoDB/MongoDB";
+import JwtMiddleware from "../../Middleware/JWT/JwtMiddleware";
+import MongoDB from "../../Repository/MongoDB/MongoDB";
 import mongoose from "mongoose";
 import ProductsService from "../../Services/Products/ProductsServices";
 import ProductController from "../../Controllers/ProductController/ProductController";
 import ProductRoutes from "../../Routes/Product/ProductRoutes";
-import {UsersServices} from "../../Services/Users/UsersServices";
+import UsersServices from "../../Services/Users/UsersServices";
 import UserController from "../../Controllers/UserController/UserController";
 import UserRoutes from "../../Routes/User/UserRoutes";
-import {Routes} from "../../Routes/Routes";
+import Routes from "../../Routes/Routes";
 import {Client} from "@elastic/elasticsearch";
 import Env from "../../Utils/Env/env.config";
 import Elasticsearch from "../../Repository/ElasticSearch/Elasticsearch";
 
 
-const Bootstrap = (app: express.Application): Array<Routes> => {
+const Bootstrap = (app: express.Application): Array<Routes.Route> => {
     app.use(json())
-    let Routes: Array<Routes> = []
+    let Routes: Array<Routes.Route> = []
     const client = new Client({
         node: Env.ELASTIC_URL
     })
     /**.
      * ======== Bootstrapping ===========
      */
-    const jwtMiddleware = new JwtMiddleware()
+    const jwtMiddleware = new JwtMiddleware.Jwt()
 
     //Repository
     const mongoDBRepository = new MongoDB(mongoose)
@@ -49,7 +49,7 @@ const Bootstrap = (app: express.Application): Array<Routes> => {
 
     //Users Initialize
     const userService = new UsersServices(mongoDBRepository, jwtMiddleware)
-    const userController = new UserController(userService)
+    const userController = new UserController(userService, jwtMiddleware)
     const userRoutes = new UserRoutes(app, jwtMiddleware, userController)
     Routes.push(userRoutes)
     /**.

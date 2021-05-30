@@ -2,7 +2,7 @@ import {RepoList, Repository} from "../Repository";
 import env from "../../Utils/Env/env.config"
 import mongoose from "mongoose"
 
-export class MongoDB extends Repository {
+export default class MongoDB extends Repository {
     constructor(private conn: mongoose.Mongoose) {
         super(RepoList.MongoDB);
     }

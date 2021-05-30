@@ -1,5 +1,5 @@
-import {JwtMiddleware} from "../../Middleware/JWT/JwtMiddleware";
-import {MongoDB} from "../../Repository/MongoDB/MongoDB";
+import JwtMiddleware from "../../Middleware/JWT/JwtMiddleware";
+import MongoDB from "../../Repository/MongoDB/MongoDB";
 import mongoose from "mongoose";
 import ProductsService from "../../Services/Products/ProductsServices";
 import {Client} from "@elastic/elasticsearch";
@@ -14,7 +14,7 @@ const Bootstrap = (): ProductsService => {
     /**.
      * ======== Bootstrapping ===========
      */
-    const jwtMiddleware = new JwtMiddleware()
+    const jwtMiddleware = new JwtMiddleware.Jwt()
     const mongoDBRepository = new MongoDB(mongoose)
     const elasticSearchRepository = new Elasticsearch(client)
 

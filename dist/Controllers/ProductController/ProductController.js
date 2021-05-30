@@ -3,10 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ResponseUtils_1 = require("../../Utils/Response/ResponseUtils");
-const Controller_1 = require("../Controller");
+const ResponseUtils_1 = __importDefault(require("../../Utils/Response/ResponseUtils"));
+const Controller_1 = __importDefault(require("../Controller"));
 const Product_1 = __importDefault(require("../../Models/Product"));
-class ProductController extends Controller_1.Controller {
+class ProductController extends Controller_1.default {
     constructor(productService) {
         super(productService);
         this.productService = productService;
@@ -15,8 +15,8 @@ class ProductController extends Controller_1.Controller {
             let product = req.body;
             const isValidate = Product_1.default.Validate(product);
             if (!isValidate.isOk) {
-                ResponseUtils_1.ResponseJSON(req, res, {
-                    Code: ResponseUtils_1.HttpStatusCode.BadRequest,
+                ResponseUtils_1.default.ResponseJSON(req, res, {
+                    Code: ResponseUtils_1.default.HttpStatusCode.BadRequest,
                     Message: isValidate.reason,
                     Data: null
                 });
@@ -24,15 +24,15 @@ class ProductController extends Controller_1.Controller {
             }
             const ProductCreated = await this.productService.CreateProduct(product);
             if (ProductCreated == null) {
-                ResponseUtils_1.ResponseJSON(req, res, {
-                    Code: ResponseUtils_1.HttpStatusCode.NotFound,
+                ResponseUtils_1.default.ResponseJSON(req, res, {
+                    Code: ResponseUtils_1.default.HttpStatusCode.NotFound,
                     Message: "Not Found!",
                     Data: null
                 });
                 return;
             }
-            ResponseUtils_1.ResponseJSON(req, res, {
-                Code: ResponseUtils_1.HttpStatusCode.Created,
+            ResponseUtils_1.default.ResponseJSON(req, res, {
+                Code: ResponseUtils_1.default.HttpStatusCode.Created,
                 Message: "Created!",
                 Data: ProductCreated
             });
@@ -41,14 +41,14 @@ class ProductController extends Controller_1.Controller {
         this.GetProducts = async (req, res) => {
             const products = await this.productService.GetProducts();
             if (products == null) {
-                ResponseUtils_1.ResponseJSON(req, res, {
+                ResponseUtils_1.default.ResponseJSON(req, res, {
                     Code: 404,
                     Message: "Empty",
                     Data: products
                 });
                 return;
             }
-            ResponseUtils_1.ResponseJSON(req, res, {
+            ResponseUtils_1.default.ResponseJSON(req, res, {
                 Data: products,
                 Message: "Success",
                 Code: 200
@@ -59,82 +59,74 @@ class ProductController extends Controller_1.Controller {
             const productId = req.params.id;
             const result = await this.productService.GetProductsById(productId);
             if (result == null) {
-                ResponseUtils_1.ResponseJSON(req, res, {
-                    Code: ResponseUtils_1.HttpStatusCode.NotFound,
+                ResponseUtils_1.default.ResponseJSON(req, res, {
+                    Code: ResponseUtils_1.default.HttpStatusCode.NotFound,
                     Message: "Not Found",
                     Data: result,
                 });
                 return;
             }
-            ResponseUtils_1.ResponseJSON(req, res, {
-                Code: ResponseUtils_1.HttpStatusCode.Ok,
+            ResponseUtils_1.default.ResponseJSON(req, res, {
+                Code: ResponseUtils_1.default.HttpStatusCode.Ok,
                 Message: "Success",
                 Data: result,
             });
             return;
         };
         this.UpdateProduct = async (req, res) => {
-            let response;
             const productId = req.params.id;
             let product = req.body;
             const isValidate = Product_1.default.Validate(product);
             if (!isValidate.isOk) {
-                response = {
-                    Code: ResponseUtils_1.HttpStatusCode.BadRequest,
+                ResponseUtils_1.default.ResponseJSON(req, res, {
+                    Code: ResponseUtils_1.default.HttpStatusCode.BadRequest,
                     Message: isValidate.reason,
                     Data: null
-                };
-                ResponseUtils_1.ResponseJSON(req, res, response);
+                });
                 return;
             }
             product._id = productId;
             const data = await this.productService.UpdateProduct(product);
             if (data == null) {
-                response = {
-                    Code: ResponseUtils_1.HttpStatusCode.InternalServerError,
+                ResponseUtils_1.default.ResponseJSON(req, res, {
+                    Code: ResponseUtils_1.default.HttpStatusCode.InternalServerError,
                     Message: "Error While Update!",
                     Data: null
-                };
-                ResponseUtils_1.ResponseJSON(req, res, response);
+                });
                 return;
             }
-            response = {
-                Code: ResponseUtils_1.HttpStatusCode.Ok,
+            ResponseUtils_1.default.ResponseJSON(req, res, {
+                Code: ResponseUtils_1.default.HttpStatusCode.Ok,
                 Message: "Updated!",
                 Data: null
-            };
-            ResponseUtils_1.ResponseJSON(req, res, response);
+            });
             return;
         };
         this.DeleteProducts = async (req, res) => {
-            let response;
             const token = req.header("Authorization");
             const productId = req.params.id;
             const deletedProduct = this.productService.DeleteProduct(productId, token);
             if (deletedProduct == null) {
-                response = {
-                    Code: ResponseUtils_1.HttpStatusCode.BadRequest,
+                ResponseUtils_1.default.ResponseJSON(req, res, {
+                    Code: ResponseUtils_1.default.HttpStatusCode.BadRequest,
                     Message: "Error While Deleting Products!",
                     Data: null
-                };
-                ResponseUtils_1.ResponseJSON(req, res, response);
+                });
                 return;
             }
             if (await deletedProduct == false) {
-                response = {
-                    Code: ResponseUtils_1.HttpStatusCode.Unauthorized,
+                ResponseUtils_1.default.ResponseJSON(req, res, {
+                    Code: ResponseUtils_1.default.HttpStatusCode.Unauthorized,
                     Message: "You're not Allowed!",
                     Data: null
-                };
-                ResponseUtils_1.ResponseJSON(req, res, response);
+                });
                 return;
             }
-            response = {
-                Code: ResponseUtils_1.HttpStatusCode.Ok,
+            ResponseUtils_1.default.ResponseJSON(req, res, {
+                Code: ResponseUtils_1.default.HttpStatusCode.Ok,
                 Message: "Deleted!",
                 Data: null
-            };
-            ResponseUtils_1.ResponseJSON(req, res, response);
+            });
             return;
         };
     }

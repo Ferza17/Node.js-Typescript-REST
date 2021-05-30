@@ -1,21 +1,23 @@
 import express from "express";
 
+namespace Routes {
+    export abstract class Route {
 
-enum RoutesList {
-    Product = "/products",
-    User = "/users"
-}
+        protected constructor(protected app: express.Application, protected name: string) {
+        }
 
-abstract class Routes {
+        GetRoute = (): string => {
+            return this.name
+        }
 
-    protected constructor(protected app: express.Application, protected name: string) {
+        abstract initRoutes(): express.Application
     }
 
-    GetRoute = (): string => {
-        return this.name
+    export enum RoutesList {
+        Product = "/products",
+        User = "/users"
     }
-
-    abstract initRoutes(): express.Application
 }
 
-export {Routes, RoutesList}
+
+export default Routes

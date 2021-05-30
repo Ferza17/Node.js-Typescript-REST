@@ -4,13 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const body_parser_1 = require("body-parser");
-const JwtMiddleware_1 = require("../../Middleware/JWT/JwtMiddleware");
-const MongoDB_1 = require("../../Repository/MongoDB/MongoDB");
+const JwtMiddleware_1 = __importDefault(require("../../Middleware/JWT/JwtMiddleware"));
+const MongoDB_1 = __importDefault(require("../../Repository/MongoDB/MongoDB"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const ProductsServices_1 = __importDefault(require("../../Services/Products/ProductsServices"));
 const ProductController_1 = __importDefault(require("../../Controllers/ProductController/ProductController"));
 const ProductRoutes_1 = __importDefault(require("../../Routes/Product/ProductRoutes"));
-const UsersServices_1 = require("../../Services/Users/UsersServices");
+const UsersServices_1 = __importDefault(require("../../Services/Users/UsersServices"));
 const UserController_1 = __importDefault(require("../../Controllers/UserController/UserController"));
 const UserRoutes_1 = __importDefault(require("../../Routes/User/UserRoutes"));
 const elasticsearch_1 = require("@elastic/elasticsearch");
@@ -25,9 +25,9 @@ const Bootstrap = (app) => {
     /**.
      * ======== Bootstrapping ===========
      */
-    const jwtMiddleware = new JwtMiddleware_1.JwtMiddleware();
+    const jwtMiddleware = new JwtMiddleware_1.default.Jwt();
     //Repository
-    const mongoDBRepository = new MongoDB_1.MongoDB(mongoose_1.default);
+    const mongoDBRepository = new MongoDB_1.default(mongoose_1.default);
     const elasticSearchRepository = new Elasticsearch_1.default(client);
     // mongoDBRepository.TestConnection().then(res => {
     //     console.log("MongoDB >> ", res)
@@ -45,8 +45,8 @@ const Bootstrap = (app) => {
     const productRoutes = new ProductRoutes_1.default(app, jwtMiddleware, productController);
     Routes.push(productRoutes);
     //Users Initialize
-    const userService = new UsersServices_1.UsersServices(mongoDBRepository, jwtMiddleware);
-    const userController = new UserController_1.default(userService);
+    const userService = new UsersServices_1.default(mongoDBRepository, jwtMiddleware);
+    const userController = new UserController_1.default(userService, jwtMiddleware);
     const userRoutes = new UserRoutes_1.default(app, jwtMiddleware, userController);
     Routes.push(userRoutes);
     /**.

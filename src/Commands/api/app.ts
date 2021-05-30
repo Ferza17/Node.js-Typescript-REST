@@ -1,9 +1,8 @@
-import {json} from 'body-parser'
 import * as http from "http";
 import express, {Request, Response} from 'express';
-import {ResponseJSON} from "../../Utils/Response/ResponseUtils";
+import ResponseUtil from "../../Utils/Response/ResponseUtils";
 import env from "../../Utils/Env/env.config"
-import {Routes} from "../../Routes/Routes";
+import Routes from "../../Routes/Routes";
 import Bootstrap from "./Bootstrap";
 
 
@@ -13,18 +12,17 @@ const server: http.Server = http.createServer(app)
 /**.
  * ======== Initialize Routes ===========
  */
-const ListRoutes: Array<Routes> = Bootstrap(app)
+const ListRoutes: Array<Routes.Route> = Bootstrap(app)
 ListRoutes.forEach(route => {
     console.log(route.GetRoute())
     route.initRoutes()
 })
 app.use("/ping", (req: Request, res: Response) => {
-    let data: ResponseJSON = {
+    ResponseUtil.ResponseJSON(req, res, {
         Code: 200,
         Message: "Pong",
         Data: null
-    }
-    ResponseJSON(req, res, data)
+    })
     return
 })
 

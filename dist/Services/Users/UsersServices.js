@@ -3,17 +3,41 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UsersServices = void 0;
-const Services_1 = require("../Services");
+const Services_1 = __importDefault(require("../Services"));
 const User_1 = __importDefault(require("../../Models/User"));
-class UsersServices extends Services_1.Services {
+class UsersServices extends Services_1.default {
     constructor(mongoDB, jwt) {
         super(mongoDB);
         this.mongoDB = mongoDB;
         this.jwt = jwt;
-        // GetUserProfile = async (): Promise<IUser> => {
-        //
-        // }
+        this.GetUserProfile = async (identity) => {
+            let result;
+            let userFind;
+            try {
+                await this.mongoDB.OpenConnection();
+                // @ts-ignore
+                userFind = await User_1.default.User.findOne({ _id: identity.userId });
+                if (userFind == null) {
+                    result = null;
+                }
+                // @ts-ignore
+                result = {
+                    _id: userFind._id,
+                    first_name: userFind.first_name,
+                    last_name: userFind.last_name,
+                    email: userFind.email,
+                    role: userFind.role,
+                    gender: userFind.gender,
+                    password: userFind.password
+                };
+            }
+            catch (err) {
+                console.log(err);
+                result = null;
+            }
+            await this.mongoDB.CloseConnection();
+            return result;
+        };
         this.UserLogin = async (user) => {
             let result;
             let userFind;
@@ -42,4 +66,4 @@ class UsersServices extends Services_1.Services {
         };
     }
 }
-exports.UsersServices = UsersServices;
+exports.default = UsersServices;

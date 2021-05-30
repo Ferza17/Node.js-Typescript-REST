@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MongoDB = void 0;
 const Repository_1 = require("../Repository");
 const env_config_1 = __importDefault(require("../../Utils/Env/env.config"));
 class MongoDB extends Repository_1.Repository {
@@ -44,4 +43,4 @@ class MongoDB extends Repository_1.Repository {
         };
     }
 }
-exports.MongoDB = MongoDB;
+exports.default = MongoDB;

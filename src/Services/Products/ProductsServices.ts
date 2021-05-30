@@ -1,12 +1,12 @@
 import ProductModel from "../../Models/Product";
-import {Services} from "../Services";
-import {MongoDB} from "../../Repository/MongoDB/MongoDB";
-import {JwtMiddleware} from "../../Middleware/JWT/JwtMiddleware";
+import Services from "../Services";
+import MongoDB from "../../Repository/MongoDB/MongoDB";
+import JwtMiddleware from "../../Middleware/JWT/JwtMiddleware";
 import Elasticsearch from "../../Repository/ElasticSearch/Elasticsearch";
 import SearchRequestModel from "../../Models/Request/SearchRequest";
 
 export default class ProductsService extends Services {
-    constructor(private mongoDB: MongoDB, private es: Elasticsearch, private jwt: JwtMiddleware) {
+    constructor(private mongoDB: MongoDB, private es: Elasticsearch, private jwt: JwtMiddleware.Jwt) {
         super(mongoDB);
     }
 
@@ -87,6 +87,11 @@ export default class ProductsService extends Services {
         let product: ProductModel.IProduct | null
         const identity = this.jwt.GetIdentity(token)
 
+        if (identity == null) {
+            return false
+        }
+
+        // @ts-ignore
         if (identity.role != "Admin") {
             return false
         }

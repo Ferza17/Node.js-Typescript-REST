@@ -1,6 +1,6 @@
-import {MongoDB} from "../Repository/MongoDB/MongoDB";
+import MongoDB from "../Repository/MongoDB/MongoDB";
 
-export abstract class Services {
+export default abstract class Services {
     protected constructor(mongoDB: MongoDB) {
     }
 }

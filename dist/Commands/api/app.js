@@ -24,7 +24,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const http = __importStar(require("http"));
 const express_1 = __importDefault(require("express"));
-const ResponseUtils_1 = require("../../Utils/Response/ResponseUtils");
+const ResponseUtils_1 = __importDefault(require("../../Utils/Response/ResponseUtils"));
 const env_config_1 = __importDefault(require("../../Utils/Env/env.config"));
 const Bootstrap_1 = __importDefault(require("./Bootstrap"));
 const app = express_1.default();
@@ -38,12 +38,11 @@ ListRoutes.forEach(route => {
     route.initRoutes();
 });
 app.use("/ping", (req, res) => {
-    let data = {
+    ResponseUtils_1.default.ResponseJSON(req, res, {
         Code: 200,
         Message: "Pong",
         Data: null
-    };
-    ResponseUtils_1.ResponseJSON(req, res, data);
+    });
     return;
 });
 /**.
