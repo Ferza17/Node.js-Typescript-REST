@@ -15,6 +15,7 @@ import MongoDB from "../../Repositories/MongoDB/MongoDB";
 import Elasticsearch from "../../Repositories/ElasticSearch/Elasticsearch";
 import ResponseUtil from "../../Utils/Response/ResponseUtils";
 import Env from "../../Utils/Env/env.config";
+import express from "express";
 
 
 const Bootstrap = (app: Express.Application): void => {
@@ -62,10 +63,21 @@ const Bootstrap = (app: Express.Application): void => {
         console.debug("Route : ", route.GetRoute())
         route.initRoutes()
     })
+    // Ping Route
     app.use("/ping", (req: Express.Request, res: Express.Response) => {
         ResponseUtil.ResponseJSON(req, res, {
             Code: 200,
             Message: "Pong",
+            Data: null
+        })
+        return
+    })
+
+    // Url Not Found Route
+    app.use((req: express.Request, res: express.Response) => {
+        ResponseUtil.ResponseJSON(req,res ,{
+            Code: ResponseUtil.HttpStatusCode.NotFound,
+            Message: "Not Found!",
             Data: null
         })
         return

@@ -57,10 +57,20 @@ const Bootstrap = (app) => {
         console.debug("Route : ", route.GetRoute());
         route.initRoutes();
     });
+    // Ping Route
     app.use("/ping", (req, res) => {
         ResponseUtils_1.default.ResponseJSON(req, res, {
             Code: 200,
             Message: "Pong",
+            Data: null
+        });
+        return;
+    });
+    // Url Not Found Route
+    app.use((req, res) => {
+        ResponseUtils_1.default.ResponseJSON(req, res, {
+            Code: ResponseUtils_1.default.HttpStatusCode.NotFound,
+            Message: "Not Found!",
             Data: null
         });
         return;
