@@ -21,7 +21,7 @@ var JwtMiddleware;
                 if (!token || token == "" || token == null) {
                     ResponseUtils_1.default.ResponseJSON(req, res, {
                         Code: ResponseUtils_1.default.HttpStatusCode.Unauthorized,
-                        Message: messageError.UNAUTHORIZED_USER,
+                        Message: messageError.INVALID_TOKEN,
                         Data: null
                     });
                     return;
@@ -32,7 +32,7 @@ var JwtMiddleware;
                     if (decodeToken == null) {
                         ResponseUtils_1.default.ResponseJSON(req, res, {
                             Code: ResponseUtils_1.default.HttpStatusCode.Unauthorized,
-                            Message: messageError.UNAUTHORIZED_USER,
+                            Message: messageError.INVALID_TOKEN,
                             Data: null
                         });
                         return;

@@ -19,7 +19,7 @@ namespace JwtMiddleware {
             if (!token || token == "" || token == null) {
                 ResponseUtil.ResponseJSON(req, res, {
                     Code: ResponseUtil.HttpStatusCode.Unauthorized,
-                    Message: messageError.UNAUTHORIZED_USER,
+                    Message: messageError.INVALID_TOKEN,
                     Data: null
                 })
                 return
@@ -31,7 +31,7 @@ namespace JwtMiddleware {
                 if (decodeToken == null) {
                     ResponseUtil.ResponseJSON(req, res, {
                         Code: ResponseUtil.HttpStatusCode.Unauthorized,
-                        Message: messageError.UNAUTHORIZED_USER,
+                        Message: messageError.INVALID_TOKEN,
                         Data: null
                     })
                     return
