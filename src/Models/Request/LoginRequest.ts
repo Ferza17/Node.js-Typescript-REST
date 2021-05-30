@@ -1,33 +1,34 @@
-interface ILoginRequest {
-    email: String,
-    password: String
-}
+namespace LoginRequestModel {
+    export interface ILoginRequest {
+        email: String,
+        password: String
+    }
 
-type validateReason = {
-    isOk: Boolean,
-    reason: String
-}
+    type validateReason = {
+        isOk: Boolean,
+        reason: String
+    }
 
-const ValidateLoginRequest = (l: ILoginRequest): validateReason => {
-    if (l.email == "") {
+    export const ValidateLoginRequest = (l: ILoginRequest): validateReason => {
+        if (l.email == "") {
+            return {
+                reason: "Please Provide Phone Email!",
+                isOk: false
+            }
+        }
+
+        if (l.password == "") {
+            return {
+                reason: "Please Provide Password!",
+                isOk: false
+            }
+        }
+
         return {
-            reason: "Please Provide Phone Email!",
-            isOk: false
+            reason: "",
+            isOk: true
         }
     }
-
-    if (l.password == "") {
-        return {
-            reason: "Please Provide Password!",
-            isOk: false
-        }
-    }
-
-    return {
-        reason: "",
-        isOk: true
-    }
 }
 
-
-export {ValidateLoginRequest, ILoginRequest}
+export default LoginRequestModel

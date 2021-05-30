@@ -1,8 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const ResponseUtils_1 = require("../../Utils/Response/ResponseUtils");
 const Controller_1 = require("../Controller");
-const Product_1 = require("../../Models/Product");
+const Product_1 = __importDefault(require("../../Models/Product"));
 class ProductController extends Controller_1.Controller {
     constructor(productService) {
         super(productService);
@@ -10,7 +13,7 @@ class ProductController extends Controller_1.Controller {
         this.CreateProduct = async (req, res) => {
             // Product Image Base64
             let product = req.body;
-            const isValidate = Product_1.Validate(product);
+            const isValidate = Product_1.default.Validate(product);
             if (!isValidate.isOk) {
                 ResponseUtils_1.ResponseJSON(req, res, {
                     Code: ResponseUtils_1.HttpStatusCode.BadRequest,
@@ -74,7 +77,7 @@ class ProductController extends Controller_1.Controller {
             let response;
             const productId = req.params.id;
             let product = req.body;
-            const isValidate = Product_1.Validate(product);
+            const isValidate = Product_1.default.Validate(product);
             if (!isValidate.isOk) {
                 response = {
                     Code: ResponseUtils_1.HttpStatusCode.BadRequest,

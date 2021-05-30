@@ -2,7 +2,7 @@ import {UsersServices} from "../../Services/Users/UsersServices"
 import {Request, Response} from "express"
 import {Controller} from "../Controller";
 import ILoginResponse from "../../Models/Response/LoginResponse";
-import {ILoginRequest, ValidateLoginRequest} from "../../Models/Request/LoginRequest";
+import LoginRequestModel from "../../Models/Request/LoginRequest";
 import {HttpStatusCode, ResponseJSON} from "../../Utils/Response/ResponseUtils";
 
 export default class UserController extends Controller {
@@ -12,9 +12,9 @@ export default class UserController extends Controller {
 
     UserLogin = async (req: Request, res: Response): Promise<void> => {
         let result: ILoginResponse | null
-        let userLoginData: ILoginRequest = req.body
+        let userLoginData: LoginRequestModel.ILoginRequest = req.body
 
-        let validate = ValidateLoginRequest(userLoginData)
+        let validate = LoginRequestModel.ValidateLoginRequest(userLoginData)
         if (!validate.isOk) {
             ResponseJSON(req, res, {
                 Code: HttpStatusCode.BadRequest,

@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersServices = void 0;
 const Services_1 = require("../Services");
-const User_1 = require("../../Models/User");
 class UsersServices extends Services_1.Services {
     constructor(mongoDB, jwt) {
         super(mongoDB);
@@ -17,7 +16,7 @@ class UsersServices extends Services_1.Services {
             try {
                 await this.mongoDB.OpenConnection();
                 // @ts-ignore
-                userFind = await User_1.User.findOne({ email: user.email, password: user.password });
+                userFind = await User.findOne({ email: user.email, password: user.password });
                 if (userFind == null) {
                     result = null;
                 }

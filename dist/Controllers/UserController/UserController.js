@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const Controller_1 = require("../Controller");
-const LoginRequest_1 = require("../../Models/Request/LoginRequest");
+const LoginRequest_1 = __importDefault(require("../../Models/Request/LoginRequest"));
 const ResponseUtils_1 = require("../../Utils/Response/ResponseUtils");
 class UserController extends Controller_1.Controller {
     constructor(userService) {
@@ -10,7 +13,7 @@ class UserController extends Controller_1.Controller {
         this.UserLogin = async (req, res) => {
             let result;
             let userLoginData = req.body;
-            let validate = LoginRequest_1.ValidateLoginRequest(userLoginData);
+            let validate = LoginRequest_1.default.ValidateLoginRequest(userLoginData);
             if (!validate.isOk) {
                 ResponseUtils_1.ResponseJSON(req, res, {
                     Code: ResponseUtils_1.HttpStatusCode.BadRequest,

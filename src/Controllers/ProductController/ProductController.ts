@@ -2,7 +2,7 @@ import {Request, Response} from "express"
 import {HttpStatusCode, ResponseJSON} from "../../Utils/Response/ResponseUtils"
 import {Controller} from "../Controller";
 import ProductServices from "../../Services/Products/ProductsServices";
-import {IProduct, Validate} from "../../Models/Product"
+import ProductModel from "../../Models/Product"
 
 export default class ProductController extends Controller {
     constructor(private productService: ProductServices) {
@@ -11,8 +11,8 @@ export default class ProductController extends Controller {
 
     CreateProduct = async (req: Request, res: Response): Promise<void> => {
         // Product Image Base64
-        let product: IProduct = req.body
-        const isValidate = Validate(product)
+        let product: ProductModel.IProduct = req.body
+        const isValidate = ProductModel.Validate(product)
         if (!isValidate.isOk) {
             ResponseJSON(req, res, {
                 Code: HttpStatusCode.BadRequest,
@@ -82,9 +82,9 @@ export default class ProductController extends Controller {
     UpdateProduct = async (req: Request, res: Response): Promise<void> => {
         let response: ResponseJSON
         const productId: String = req.params.id
-        let product: IProduct = req.body
+        let product: ProductModel.IProduct = req.body
 
-        const isValidate = Validate(product)
+        const isValidate = ProductModel.Validate(product)
         if (!isValidate.isOk) {
             response = {
                 Code: HttpStatusCode.BadRequest,

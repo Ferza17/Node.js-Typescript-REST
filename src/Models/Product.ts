@@ -1,86 +1,82 @@
 import mongoose, {Document} from "mongoose"
 
-const productSchema = new mongoose.Schema({
-    name: {
-        type: String
-    },
-    image: {
-        type: String
-    },
-    price: {
-        type: Number
-    },
-    description: {
-        type: String
-    },
-    type: {
+namespace ProductModel {
+    const productSchema = new mongoose.Schema({
+        name: {
+            type: String
+        },
+        image: {
+            type: String
+        },
+        price: {
+            type: Number
+        },
+        description: {
+            type: String
+        },
+        type: {
+            type: String
+        }
+    }, {
+        versionKey: false
+    })
+
+    export const ProductMappings = {
+        name: {type: "keyword"},
+        image: {type: "text"},
+        price: {type: "integer"},
+        description: {type: "keyword"},
+        type: {type: "text"}
+    }
+
+    export type validateReason = {
+        isOk: Boolean,
+        reason: String
+    }
+
+    export interface IProduct extends Document {
+        _id: String,
+        name: String,
+        image: String,
+        price: Number,
+        description: String,
         type: String
     }
-}, {
-    versionKey: false
-})
 
-const ProductMappings = {
-    name: {type: "keyword"},
-    image: {type: "text"},
-    price: {type: "integer"},
-    description: {type: "keyword"},
-    type: {type: "text"}
-}
+    export const Product = mongoose.model<IProduct>("products", productSchema)
 
-type validateReason = {
-    isOk: Boolean,
-    reason: String
-}
+    // Custom Validation
+    export const Validate = (p: IProduct): validateReason => {
+        let val: validateReason = {
+            isOk: true,
+            reason: ""
+        }
+        if (p.name == "") {
+            val.isOk = false
+            val.reason = "Should Provide name"
+            return val
+        }
 
-interface IProduct extends Document {
-    _id: String,
-    name: String,
-    image: String,
-    price: Number,
-    description: String,
-    type: String
-}
+        if (p.price == 0) {
+            val.isOk = false
+            val.reason = "Should Provide price"
+            return val
+        }
 
-const Product = mongoose.model<IProduct>("products", productSchema)
+        if (p.description == "") {
+            val.isOk = false
+            val.reason = "Should Provide description"
+        }
 
-// Custom Validation
-const Validate = (p: IProduct): validateReason => {
-    let val: validateReason = {
-        isOk: true,
-        reason: ""
-    }
-    if (p.name == "") {
-        val.isOk = false
-        val.reason = "Should Provide name"
+        if (p.type == "") {
+            val.isOk = false
+            val.reason = "Should Provide Type"
+            return val
+        }
+
         return val
     }
 
-    if (p.price == 0) {
-        val.isOk = false
-        val.reason = "Should Provide price"
-        return val
-    }
-
-    if (p.description == "") {
-        val.isOk = false
-        val.reason = "Should Provide description"
-    }
-
-    if (p.type == "") {
-        val.isOk = false
-        val.reason = "Should Provide Type"
-        return val
-    }
-
-    return val
 }
-
-export {
-    Product,
-    IProduct,
-    Validate,
-    ProductMappings
-}
-
+export default ProductModel
 

@@ -1,6 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const Product_1 = require("../../Models/Product");
+const Product_1 = __importDefault(require("../../Models/Product"));
 const Services_1 = require("../Services");
 class ProductsService extends Services_1.Services {
     constructor(mongoDB, es, jwt) {
@@ -12,7 +15,7 @@ class ProductsService extends Services_1.Services {
             let products;
             try {
                 await this.mongoDB.OpenConnection();
-                products = await Product_1.Product.find({}).exec();
+                products = await Product_1.default.Product.find({}).exec();
                 await this.mongoDB.CloseConnection();
             }
             catch (err) {
@@ -25,7 +28,7 @@ class ProductsService extends Services_1.Services {
             let product;
             try {
                 await this.mongoDB.OpenConnection();
-                product = await Product_1.Product.findById({ _id: productId });
+                product = await Product_1.default.Product.findById({ _id: productId });
                 await this.mongoDB.CloseConnection();
             }
             catch (err) {
@@ -40,7 +43,7 @@ class ProductsService extends Services_1.Services {
             try {
                 // Insert to MongoDB
                 await this.mongoDB.OpenConnection();
-                product = await Product_1.Product.create(p);
+                product = await Product_1.default.Product.create(p);
                 await this.mongoDB.CloseConnection();
                 // Insert to Elasticsearch
                 await conn.index({
@@ -69,7 +72,7 @@ class ProductsService extends Services_1.Services {
             let product;
             try {
                 await this.mongoDB.OpenConnection();
-                product = await Product_1.Product.findOneAndUpdate({ _id: p._id }, p).exec();
+                product = await Product_1.default.Product.findOneAndUpdate({ _id: p._id }, p).exec();
                 await this.mongoDB.CloseConnection();
             }
             catch (err) {
@@ -86,7 +89,7 @@ class ProductsService extends Services_1.Services {
             }
             try {
                 await this.mongoDB.OpenConnection();
-                product = await Product_1.Product.findOneAndDelete({ _id: productId });
+                product = await Product_1.default.Product.findOneAndDelete({ _id: productId });
                 await this.mongoDB.CloseConnection();
             }
             catch (err) {
@@ -104,7 +107,7 @@ class ProductsService extends Services_1.Services {
                     index: "products",
                     body: {
                         mappings: {
-                            properties: Product_1.ProductMappings
+                            properties: Product_1.default.ProductMappings
                         }
                     }
                 }, {

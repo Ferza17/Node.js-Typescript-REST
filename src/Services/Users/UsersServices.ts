@@ -1,8 +1,8 @@
 import {Services} from "../Services";
 import {MongoDB} from "../../Repository/MongoDB/MongoDB";
-import {IUser, User} from "../../Models/User";
+import UserModel from "../../Models/User";
 import LoginResponse from "../../Models/Response/LoginResponse";
-import {ILoginRequest} from "../../Models/Request/LoginRequest";
+import LoginRequestModel from "../../Models/Request/LoginRequest";
 import ILoginResponse from "../../Models/Response/LoginResponse";
 import {JwtMiddleware, ITokenIdentity} from "../../Middleware/JWT/JwtMiddleware"
 
@@ -15,9 +15,9 @@ export class UsersServices extends Services {
     //
     // }
 
-    UserLogin = async (user: ILoginRequest): Promise<ILoginResponse | null> => {
+    UserLogin = async (user: LoginRequestModel.ILoginRequest): Promise<ILoginResponse | null> => {
         let result: LoginResponse | null
-        let userFind: IUser
+        let userFind: UserModel.IUser
 
         try {
             await this.mongoDB.OpenConnection()
