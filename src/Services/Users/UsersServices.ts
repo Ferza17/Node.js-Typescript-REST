@@ -22,7 +22,7 @@ export class UsersServices extends Services {
         try {
             await this.mongoDB.OpenConnection()
             // @ts-ignore
-            userFind = await User.findOne({email: user.email, password: user.password})
+            userFind = await UserModel.User.findOne({email: user.email, password: user.password})
             if (userFind == null) {
                 result = null
             }
@@ -37,9 +37,10 @@ export class UsersServices extends Services {
                 token: token
             }
         } catch (err) {
-            throw new Error(err)
+            result = null
+            console.log(err)
         }
-
+        await this.mongoDB.OpenConnection()
         return result
     }
 
