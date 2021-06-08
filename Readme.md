@@ -1,6 +1,6 @@
 # Please, Read Before You Run this apps
 ## Requirement
-* Install node.js v14.15.4 or Up
+* Install node.js v14.15.4 or Higher
 * Install typescript on your machine
 * Install MongoDB
 * Insert mongodb.products.schema to your MongoDB
