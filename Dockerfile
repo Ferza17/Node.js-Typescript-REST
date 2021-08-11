@@ -12,6 +12,6 @@ COPY . .
 
 RUN tsc
 
-EXPOSE 3000
+EXPOSE 8080
 
 CMD ["npm", "run", "api"]

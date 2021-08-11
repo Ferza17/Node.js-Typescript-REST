@@ -66,7 +66,7 @@ const Bootstrap = (app: Express.Application): void => {
     app.use("/ping", (req: Express.Request, res: Express.Response) => {
         ResponseUtil.ResponseJSON(req, res, {
             Code: 200,
-            Message: "Pong Development",
+            Message: "Pong Production",
             Data: null
         })
         return
