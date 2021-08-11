@@ -14,4 +14,6 @@ RUN tsc
 
 EXPOSE 8080
 
+VOLUME ["/app"]
+
 CMD ["npm", "run", "api"]

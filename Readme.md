@@ -20,7 +20,7 @@
   <br>
   <br>
   used for run your REST API.
-  some api must have authentication, to get token you can use 
+  some api must have authentication, to get token you can use
   route ```/user/login```.
 
 * ### dev
