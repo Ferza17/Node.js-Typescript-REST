@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const body_parser_1 = require("body-parser");
-const elasticsearch_1 = require("@elastic/elasticsearch");
 const JwtMiddleware_1 = __importDefault(require("../../Middleware/JWT/JwtMiddleware"));
 const ProductRoutes_1 = __importDefault(require("../../Routes/Product/ProductRoutes"));
 const UserRoutes_1 = __importDefault(require("../../Routes/User/UserRoutes"));
@@ -14,16 +13,15 @@ const UserController_1 = __importDefault(require("../../Controllers/UserControll
 const ProductsServices_1 = __importDefault(require("../../Services/Products/ProductsServices"));
 const UsersServices_1 = __importDefault(require("../../Services/Users/UsersServices"));
 const MongoDB_1 = __importDefault(require("../../Repositories/MongoDB/MongoDB"));
-const Elasticsearch_1 = __importDefault(require("../../Repositories/ElasticSearch/Elasticsearch"));
+// import Elasticsearch from "../../Repositories/ElasticSearch/Elasticsearch";
 const ResponseUtils_1 = __importDefault(require("../../Utils/Response/ResponseUtils"));
-const env_config_1 = __importDefault(require("../../Utils/Env/env.config"));
 const Bootstrap = (app) => {
     app.use(body_parser_1.json());
     let Routes = [];
     let Repos = [];
-    const client = new elasticsearch_1.Client({
-        node: env_config_1.default.ELASTIC_URL
-    });
+    // const client = new Client({
+    //     node: Env.ELASTIC_URL
+    // })
     /**.
      * ======== Bootstrapping ===========
      */
@@ -31,10 +29,10 @@ const Bootstrap = (app) => {
     //Repositories
     const mongoDBRepository = new MongoDB_1.default(mongoose_1.default);
     Repos.push(mongoDBRepository);
-    const elasticSearchRepository = new Elasticsearch_1.default(client);
-    Repos.push(elasticSearchRepository);
+    // const elasticSearchRepository = new Elasticsearch(client)
+    // Repos.push(elasticSearchRepository)
     //Products Initialize
-    const productService = new ProductsServices_1.default(mongoDBRepository, elasticSearchRepository);
+    const productService = new ProductsServices_1.default(mongoDBRepository);
     const productController = new ProductController_1.default(productService, jwtMiddleware);
     const productRoutes = new ProductRoutes_1.default(app, jwtMiddleware, productController);
     Routes.push(productRoutes);

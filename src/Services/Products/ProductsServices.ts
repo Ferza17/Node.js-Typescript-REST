@@ -6,7 +6,7 @@ import SearchRequestModel from "../../Models/Request/SearchRequest";
 import TokenIdentity from "../../Models/TokenIdentity";
 
 export default class ProductsService extends Services {
-    constructor(private _mongoDB: MongoDB, private _es: Elasticsearch) {
+    constructor(private _mongoDB: MongoDB) {
         super(_mongoDB);
     }
 
@@ -36,37 +36,38 @@ export default class ProductsService extends Services {
         return product
     }
 
+    // @ts-ignore
     CreateProduct = async (p: ProductModel.IProduct): Promise<ProductModel.IProduct | null> => {
-        let product: ProductModel.IProduct | null
-        const conn = this._es.GetConnection()
-        try {
-            // Insert to MongoDB
-            await this._mongoDB.OpenConnection()
-            product = await ProductModel.Product.create(p)
-            await this._mongoDB.CloseConnection()
-
-            // Insert to Elasticsearch
-            await conn.index({
-                index: "products",
-                // @ts-ignore
-                id: p._id,
-                body: {
-                    name: p.name,
-                    image: p.image,
-                    price: p.price,
-                    description: p.description,
-                    type: p.type
-                }
-            }, {
-                ignore: [400]
-            })
-            await conn.close()
-        } catch (err) {
-            product = null
-            console.log(err)
-        }
-
-        return product
+        // let product: ProductModel.IProduct | null
+        // const conn = this._es.GetConnection()
+        // try {
+        //     // Insert to MongoDB
+        //     await this._mongoDB.OpenConnection()
+        //     product = await ProductModel.Product.create(p)
+        //     await this._mongoDB.CloseConnection()
+        //
+        //     // Insert to Elasticsearch
+        //     await conn.index({
+        //         index: "products",
+        //         // @ts-ignore
+        //         id: p._id,
+        //         body: {
+        //             name: p.name,
+        //             image: p.image,
+        //             price: p.price,
+        //             description: p.description,
+        //             type: p.type
+        //         }
+        //     }, {
+        //         ignore: [400]
+        //     })
+        //     await conn.close()
+        // } catch (err) {
+        //     product = null
+        //     console.log(err)
+        // }
+        //
+        // return product
     }
 
     UpdateProduct = async (p: ProductModel.IProduct): Promise<ProductModel.IProduct | null> => {
@@ -100,49 +101,50 @@ export default class ProductsService extends Services {
         return product
     }
 
+    // @ts-ignore
     InsertToElasticSearch = async (): Promise<Boolean> => {
-        const products: Array<ProductModel.IProduct> | null = await this.GetProducts()
-        const conn = this._es.GetConnection()
-        try {
-            // Mappings
-            await conn.indices.create({
-                index: "products",
-                body: {
-                    mappings: {
-                        properties: ProductModel.ProductMappings
-                    }
-                }
-            }, {
-                ignore: [400]
-            })
-            if (products == null) {
-                return false
-            }
-            products.map(async (p) => {
-                await conn.index({
-                    // @ts-ignore
-                    id: p._id,
-                    index: "products",
-                    body: {
-                        name: p.name,
-                        image: p.image,
-                        price: p.price,
-                        description: p.description,
-                        type: p.type
-                    }
-                }, {
-                    ignore: [400]
-                })
-                console.log("Success inserted data with id : ", p._id)
-
-            })
-
-        } catch (err) {
-            console.log(err)
-            return false
-        }
-        await conn.close()
-        return true
+        // const products: Array<ProductModel.IProduct> | null = await this.GetProducts()
+        // const conn = this._es.GetConnection()
+        // try {
+        //     // Mappings
+        //     await conn.indices.create({
+        //         index: "products",
+        //         body: {
+        //             mappings: {
+        //                 properties: ProductModel.ProductMappings
+        //             }
+        //         }
+        //     }, {
+        //         ignore: [400]
+        //     })
+        //     if (products == null) {
+        //         return false
+        //     }
+        //     products.map(async (p) => {
+        //         await conn.index({
+        //             // @ts-ignore
+        //             id: p._id,
+        //             index: "products",
+        //             body: {
+        //                 name: p.name,
+        //                 image: p.image,
+        //                 price: p.price,
+        //                 description: p.description,
+        //                 type: p.type
+        //             }
+        //         }, {
+        //             ignore: [400]
+        //         })
+        //         console.log("Success inserted data with id : ", p._id)
+        //
+        //     })
+        //
+        // } catch (err) {
+        //     console.log(err)
+        //     return false
+        // }
+        // await conn.close()
+        // return true
     }
 
     SearchProducts = async (searchRequest: SearchRequestModel.ISearchRequest): Promise<Array<ProductModel.IProduct> | null> => {

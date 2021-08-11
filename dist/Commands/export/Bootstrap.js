@@ -8,7 +8,7 @@ const MongoDB_1 = __importDefault(require("../../Repositories/MongoDB/MongoDB"))
 const mongoose_1 = __importDefault(require("mongoose"));
 const ProductsServices_1 = __importDefault(require("../../Services/Products/ProductsServices"));
 const elasticsearch_1 = require("@elastic/elasticsearch");
-const Elasticsearch_1 = __importDefault(require("../../Repositories/ElasticSearch/Elasticsearch"));
+// import Elasticsearch from "../../Repositories/ElasticSearch/Elasticsearch";
 const env_config_1 = __importDefault(require("../../Utils/Env/env.config"));
 const Bootstrap = () => {
     const client = new elasticsearch_1.Client({
@@ -19,11 +19,11 @@ const Bootstrap = () => {
      */
     const jwtMiddleware = new JwtMiddleware_1.default.Jwt();
     const mongoDBRepository = new MongoDB_1.default(mongoose_1.default);
-    const elasticSearchRepository = new Elasticsearch_1.default(client);
+    // const elasticSearchRepository = new Elasticsearch(client)
     //Products
     /**.
      * ======== End Bootstrapping ===========
      */
-    return new ProductsServices_1.default(mongoDBRepository, elasticSearchRepository);
+    return new ProductsServices_1.default(mongoDBRepository);
 };
 exports.default = Bootstrap;

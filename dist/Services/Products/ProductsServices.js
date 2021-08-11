@@ -6,10 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Product_1 = __importDefault(require("../../Models/Product"));
 const Services_1 = __importDefault(require("../Services"));
 class ProductsService extends Services_1.default {
-    constructor(_mongoDB, _es) {
+    constructor(_mongoDB) {
         super(_mongoDB);
         this._mongoDB = _mongoDB;
-        this._es = _es;
         this.GetProducts = async () => {
             let products;
             try {
@@ -36,36 +35,38 @@ class ProductsService extends Services_1.default {
             }
             return product;
         };
+        // @ts-ignore
         this.CreateProduct = async (p) => {
-            let product;
-            const conn = this._es.GetConnection();
-            try {
-                // Insert to MongoDB
-                await this._mongoDB.OpenConnection();
-                product = await Product_1.default.Product.create(p);
-                await this._mongoDB.CloseConnection();
-                // Insert to Elasticsearch
-                await conn.index({
-                    index: "products",
-                    // @ts-ignore
-                    id: p._id,
-                    body: {
-                        name: p.name,
-                        image: p.image,
-                        price: p.price,
-                        description: p.description,
-                        type: p.type
-                    }
-                }, {
-                    ignore: [400]
-                });
-                await conn.close();
-            }
-            catch (err) {
-                product = null;
-                console.log(err);
-            }
-            return product;
+            // let product: ProductModel.IProduct | null
+            // const conn = this._es.GetConnection()
+            // try {
+            //     // Insert to MongoDB
+            //     await this._mongoDB.OpenConnection()
+            //     product = await ProductModel.Product.create(p)
+            //     await this._mongoDB.CloseConnection()
+            //
+            //     // Insert to Elasticsearch
+            //     await conn.index({
+            //         index: "products",
+            //         // @ts-ignore
+            //         id: p._id,
+            //         body: {
+            //             name: p.name,
+            //             image: p.image,
+            //             price: p.price,
+            //             description: p.description,
+            //             type: p.type
+            //         }
+            //     }, {
+            //         ignore: [400]
+            //     })
+            //     await conn.close()
+            // } catch (err) {
+            //     product = null
+            //     console.log(err)
+            // }
+            //
+            // return product
         };
         this.UpdateProduct = async (p) => {
             let product;
@@ -96,48 +97,50 @@ class ProductsService extends Services_1.default {
             }
             return product;
         };
+        // @ts-ignore
         this.InsertToElasticSearch = async () => {
-            const products = await this.GetProducts();
-            const conn = this._es.GetConnection();
-            try {
-                // Mappings
-                await conn.indices.create({
-                    index: "products",
-                    body: {
-                        mappings: {
-                            properties: Product_1.default.ProductMappings
-                        }
-                    }
-                }, {
-                    ignore: [400]
-                });
-                if (products == null) {
-                    return false;
-                }
-                products.map(async (p) => {
-                    await conn.index({
-                        // @ts-ignore
-                        id: p._id,
-                        index: "products",
-                        body: {
-                            name: p.name,
-                            image: p.image,
-                            price: p.price,
-                            description: p.description,
-                            type: p.type
-                        }
-                    }, {
-                        ignore: [400]
-                    });
-                    console.log("Success inserted data with id : ", p._id);
-                });
-            }
-            catch (err) {
-                console.log(err);
-                return false;
-            }
-            await conn.close();
-            return true;
+            // const products: Array<ProductModel.IProduct> | null = await this.GetProducts()
+            // const conn = this._es.GetConnection()
+            // try {
+            //     // Mappings
+            //     await conn.indices.create({
+            //         index: "products",
+            //         body: {
+            //             mappings: {
+            //                 properties: ProductModel.ProductMappings
+            //             }
+            //         }
+            //     }, {
+            //         ignore: [400]
+            //     })
+            //     if (products == null) {
+            //         return false
+            //     }
+            //     products.map(async (p) => {
+            //         await conn.index({
+            //             // @ts-ignore
+            //             id: p._id,
+            //             index: "products",
+            //             body: {
+            //                 name: p.name,
+            //                 image: p.image,
+            //                 price: p.price,
+            //                 description: p.description,
+            //                 type: p.type
+            //             }
+            //         }, {
+            //             ignore: [400]
+            //         })
+            //         console.log("Success inserted data with id : ", p._id)
+            //
+            //     })
+            //
+            // } catch (err) {
+            //     console.log(err)
+            //     return false
+            // }
+            // await conn.close()
+            // return true
         };
         this.SearchProducts = async (searchRequest) => {
             return null;

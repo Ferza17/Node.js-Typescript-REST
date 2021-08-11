@@ -3,7 +3,7 @@ import MongoDB from "../../Repositories/MongoDB/MongoDB";
 import mongoose from "mongoose";
 import ProductsService from "../../Services/Products/ProductsServices";
 import {Client} from "@elastic/elasticsearch";
-import Elasticsearch from "../../Repositories/ElasticSearch/Elasticsearch";
+// import Elasticsearch from "../../Repositories/ElasticSearch/Elasticsearch";
 import Env from "../../Utils/Env/env.config"
 
 
@@ -16,7 +16,7 @@ const Bootstrap = (): ProductsService => {
      */
     const jwtMiddleware = new JwtMiddleware.Jwt()
     const mongoDBRepository = new MongoDB(mongoose)
-    const elasticSearchRepository = new Elasticsearch(client)
+    // const elasticSearchRepository = new Elasticsearch(client)
 
 
 //Products
@@ -24,7 +24,7 @@ const Bootstrap = (): ProductsService => {
      * ======== End Bootstrapping ===========
      */
 
-    return new ProductsService(mongoDBRepository, elasticSearchRepository)
+    return new ProductsService(mongoDBRepository)
 }
 
 

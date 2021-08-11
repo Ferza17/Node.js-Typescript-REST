@@ -1,0 +1,7 @@
+.idea
+.gitignore
+elasticsearch.products.mapping.json
+mongodb.products.schema.json
+Node-Typescript-REST.postman_collection.json
+Readme.md
+dist

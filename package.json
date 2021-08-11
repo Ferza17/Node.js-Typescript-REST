@@ -5,7 +5,7 @@
   "main": "./dist/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "api": "tsc && node dist/Commands/api/app.js",
+    "api": "node dist/Commands/api/app.js",
     "dev": "tsc && nodemon dist/Commands/api/app.js",
     "export": "tsc && node dist/Commands/export/app.js"
   },
