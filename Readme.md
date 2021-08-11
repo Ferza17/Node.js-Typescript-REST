@@ -28,6 +28,10 @@
   <br>
   used for developing these apps.
 
+## Run in Docker
+
+```docker build -t=<your_tag(developmet or production)> .```
+
 have any question ? <br>
 please send me by e-mail : feryreza.aditya@gmail.com
 
