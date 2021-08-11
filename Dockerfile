@@ -14,4 +14,6 @@ RUN tsc
 
 EXPOSE 3000
 
+VOLUME ["/app"]
+
 CMD ["npm", "run", "api"]
